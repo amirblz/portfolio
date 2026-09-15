@@ -1,0 +1,78 @@
+---
+import Base from "../layouts/Base.astro";
+import base from "../data/cv-base.json";
+import core from "../data/cv-core.json";
+
+const bullets = core.roles as Record<string, string[]>;
+---
+
+<Base
+  title="Amir Balazade — CV"
+  description="Seven years of front-end engineering in fintech and web3: Angular, TypeScript, real-time trading views and payment flows."
+  path="/cv"
+>
+  <h1 class="lede">{base.name}</h1>
+  <p class="standfirst">{core.summary}</p>
+
+  <p>
+    <a class="action" href="/amir-balazade-cv.pdf" download>Download as PDF</a>
+  </p>
+
+  <div class="prose">
+    <h2>Experience</h2>
+  </div>
+
+  {
+    base.roles.map((role) => (
+      <article class="cv-post">
+        <div class="cv-head">
+          <span class="cv-company">{role.company}</span>
+          <span class="cv-dates">{role.dates}</span>
+        </div>
+        <p class="cv-title">
+          {role.title}, {role.context}
+          {role.arrangement ? ` — ${role.arrangement}` : ""}
+        </p>
+        <ul>
+          {bullets[role.id]?.map((line) => <li>{line}</li>)}
+        </ul>
+      </article>
+    ))
+  }
+
+  <div class="prose">
+    <h2>Skills</h2>
+  </div>
+
+  <dl class="cv-skills">
+    {
+      core.skills.map((group) => (
+        <div>
+          <dt>{group.label}</dt>
+          <dd>{group.items.join(", ")}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <div class="prose">
+    <h2>Projects</h2>
+    <ul>
+      {
+        base.projects.map((project) => (
+          <li>
+            <strong>{project.name}</strong> — {project.description}
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2>Education</h2>
+    <p>
+      {base.education.degree}, {base.education.institution}, {base.education.dates}
+    </p>
+
+    <h2>Languages</h2>
+    <p>{base.languages.join(", ")}</p>
+  </div>
+</Base>

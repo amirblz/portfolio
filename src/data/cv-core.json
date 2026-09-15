@@ -1,0 +1,86 @@
+{
+  "headline": "Front-End Engineer",
+  "summary": "Front-End Engineer, 7+ years in Angular and TypeScript, most of it in FinTech and Web3, on screens dense with tables and charting where a wrong number is noticed in seconds. Comfortable turning a complicated business into features with product design and stakeholders, and drawn to the R&D and AI end of a product, where the shape of the interface is still open.",
+  "availability": "Based in Istanbul, available for remote work.",
+  "availabilityRelocation": "Based in Istanbul, open to relocating to {place}.",
+  "skills": [
+    {
+      "label": "Frameworks and languages",
+      "items": ["Angular", "TypeScript", "JavaScript", "HTML", "CSS", "Sass"]
+    },
+    {
+      "label": "State and data",
+      "items": [
+        "RxJS",
+        "NgRx",
+        "NGXS",
+        "Redux",
+        "state management",
+        "REST API integration",
+        "WebSockets",
+        "SignalR",
+        "AgGrid",
+        "Highcharts",
+        "TradingView",
+        "charting"
+      ]
+    },
+    {
+      "label": "UI and design",
+      "items": [
+        "design system",
+        "component libraries",
+        "Tailwind",
+        "PrimeNG",
+        "Angular Material",
+        "Bootstrap",
+        "BEM"
+      ]
+    },
+    {
+      "label": "Web platform",
+      "items": [
+        "PWA",
+        "service workers",
+        "SSR",
+        "SEO",
+        "web performance",
+        "cross-browser support",
+        "OIDC",
+        "responsive design"
+      ]
+    },
+    {
+      "label": "Testing and tooling",
+      "items": ["unit testing", "Karma", "Jasmine", "Git", "GitLab", "GitHub"]
+    },
+    {
+      "label": "AI",
+      "items": ["OpenAI API", "Anthropic API", "prompt engineering", "streaming chat UI", "RAG"]
+    }
+  ],
+  "roles": {
+    "remorch": [
+      "Took ownership of a secure PWA end to end and shipped it, from architecture through to deployment.",
+      "Built a modular Angular component library and the design system every DeFi feature was assembled from.",
+      "Integrated REST APIs into secure workflows for digital assets, with the real-time updates the trading desk needs.",
+      "Deployed a mobile-first, search-optimized platform and drove the performance optimization work that followed.",
+      "Presented the product at the company's Web Summit booth as the technical person answering investors."
+    ],
+    "dara": [
+      "Delivered an order management system with a cross-functional Agile team, pair programming daily with the desk.",
+      "Built real-time trading views on AgGrid, Highcharts and TradingView, with live data and no page refresh.",
+      "Integrated SignalR WebSockets to carry high-frequency data to more than 5,000 active traders.",
+      "Mentored new joiners onto the stack and the brokerage business, and ran knowledge-sharing sessions."
+    ],
+    "mymonshi": [
+      "Built a B2B CRM platform end to end, from design mockups through to production audio and video calling.",
+      "Led the R&D that chose the core stack, reworked the state store, and built secure cloud storage and real-time chat."
+    ],
+    "rampart": [
+      "Ran requirements analysis with stakeholders and turned mockups into implementation plans the team could estimate.",
+      "Raised code quality across inherited projects, and developed virtual tours for architectural projects."
+    ]
+  },
+  "projects": ["zhambon", "tisten"]
+}

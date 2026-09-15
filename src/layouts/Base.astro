@@ -1,0 +1,65 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+}
+
+const { title, description, path } = Astro.props;
+
+const nav = [
+  { href: "/", label: "index" },
+  { href: "/cv", label: "cv" },
+  { href: "/work/ossa", label: "ossa" },
+  { href: "/work/cairn", label: "cairn" },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
+    />
+  </head>
+  <body>
+    <header class="rail">
+      <img class="rail-photo" src="/photo.jpg" alt="Amir Balazade" width="72" height="72" />
+      <p class="rail-name">Amir Balazade</p>
+      <p class="rail-role">Front-end engineer</p>
+
+      <nav aria-label="Sections">
+        {
+          nav.map((item) => (
+            <a href={item.href} aria-current={item.href === path ? "page" : undefined}>
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+
+      <div class="rail-contact">
+        <a href="mailto:abalazade@gmail.com">abalazade@gmail.com</a>
+        <a href="https://linkedin.com/in/amirbalazade" rel="me">linkedin.com/in/amirbalazade</a>
+        <p>Istanbul, open to remote</p>
+      </div>
+    </header>
+
+    <main class="readout">
+      <slot />
+    </main>
+  </body>
+</html>

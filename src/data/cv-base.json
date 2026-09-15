@@ -1,0 +1,77 @@
+{
+  "$comment": "Facts, stated once. Every version renders from this file plus its own content/<id>.json. Nothing here may be invented: it is transcribed from E:/CV/AmirBalazade-CV.pdf, with corrections Amir confirmed and recorded in OPEN-QUESTIONS.md.",
+
+  "name": "Amir Balazade",
+  "location": "Istanbul, Türkiye",
+  "email": "abalazade@gmail.com",
+  "github": "github.com/amirblz",
+  "linkedin": "linkedin.com/in/amirbalazade",
+  "yearsExperience": "7+",
+
+  "roles": [
+    {
+      "id": "remorch",
+      "company": "Remorch Co.",
+      "title": "Front-End Engineer",
+      "context": "FinTech, Blockchain, Web3",
+      "dates": "Oct 2024 - Present",
+      "arrangement": "Full time on site to April 2026, part time remote work, project based since"
+    },
+    {
+      "id": "dara",
+      "company": "Dara Broker Sedna Co.",
+      "title": "Front-End Engineer",
+      "context": "FinTech",
+      "dates": "May 2023 - Oct 2024",
+      "arrangement": null
+    },
+    {
+      "id": "mymonshi",
+      "company": "MyMonshi",
+      "title": "Front-End Developer",
+      "context": "CRM, VoIP, Cloud",
+      "dates": "Oct 2020 - Sep 2022",
+      "arrangement": "Hybrid"
+    },
+    {
+      "id": "rampart",
+      "company": "Rampart Co.",
+      "title": "Front-End Developer",
+      "context": "Virtual Tour",
+      "dates": "Aug 2017 - Oct 2020",
+      "arrangement": "Hybrid"
+    }
+  ],
+
+  "education": {
+    "degree": "Bachelor of Computer Science",
+    "institution": "Azad University, Science and Research Branch",
+    "dates": "2017 - 2022"
+  },
+
+  "languages": [
+    "Persian native",
+    "fluent English (TOEFL iBT 100)",
+    "German language B1",
+    "Turkish A2"
+  ],
+
+  "projects": [
+    {
+      "id": "zhambon",
+      "name": "zhambon.com",
+      "description": "Financial investment pool management web application"
+    },
+    {
+      "id": "wordy",
+      "name": "wordy.cards",
+      "description": "German language learning web application"
+    },
+    {
+      "id": "tisten",
+      "name": "tisten.ir, apadanakitch.com, kalamato.com",
+      "description": "E-commerce sites built for organic search"
+    },
+    { "id": "jadidchi", "name": "jadidchi.com", "description": "Marketing platform" }
+  ]
+}

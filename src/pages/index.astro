@@ -1,0 +1,80 @@
+---
+import Base from "../layouts/Base.astro";
+
+const work = [
+  {
+    when: "2024 — now",
+    name: "Remorch",
+    note: "A crypto payment gateway: a checkout people pay through, an admin panel the desk runs orders and KYC from, and a wallet PWA. Angular 22, zoneless.",
+    stack: "Angular 22, signals, zoneless, design system",
+  },
+  {
+    when: "2025 — now",
+    name: "Zhambon",
+    note: "An investment-pool platform where four roles — investor, trader, accountant, admin — read the same numbers and are allowed to do different things with them.",
+    stack: "Angular, PWA, Docker, Cloudflare Tunnel",
+  },
+  {
+    when: "demo",
+    name: "CAIRN",
+    note: "A flask you can turn, cool down and buy. One scroll position drives the camera, the explode, the temperature model and the copy, so nothing on the page can fall out of sync.",
+    stack: "three.js, no build step, 39 assertions",
+    href: "https://cairn.abalazade.workers.dev",
+  },
+  {
+    when: "demo",
+    name: "OSSA",
+    note: "A small-batch storefront where stock is tracked per variant, not per product — so a sold-out size stays visible and struck through instead of quietly disappearing.",
+    stack: "vanilla JS, no framework, no build step",
+    href: "https://ossa.abalazade.workers.dev",
+  },
+];
+---
+
+<Base
+  title="Amir Balazade — front-end engineer"
+  description="Front-end engineer, seven years in Angular and TypeScript, most of it in fintech and web3."
+  path="/"
+>
+  <h1 class="lede">I build the screens where a wrong number is noticed in seconds.</h1>
+
+  <p class="standfirst">
+    Seven years in Angular and TypeScript, most of it in fintech and web3 — order books, payment
+    flows, admin panels dense with tables and charts. Based in Istanbul, working remotely.
+  </p>
+
+  <dl class="figures">
+    <div>
+      <dt>Years in Angular</dt>
+      <dd>7+</dd>
+    </div>
+    <div>
+      <dt>Traders on live data</dt>
+      <dd>5,000+</dd>
+    </div>
+    <div>
+      <dt>Demos you can open</dt>
+      <dd>2</dd>
+    </div>
+  </dl>
+
+  <section class="work" aria-label="Selected work">
+    {
+      work.map((item) => {
+        const Row = item.href ? "a" : "div";
+        return (
+          <Row class="work-row" href={item.href}>
+            <span class="work-when">{item.when}</span>
+            <span>
+              <span class="work-name">{item.name}</span>
+              <p class="work-note">{item.note}</p>
+              <p class="work-stack">{item.stack}</p>
+            </span>
+          </Row>
+        );
+      })
+    }
+  </section>
+
+  <p><a class="action" href="/cv">Read the full CV</a></p>
+</Base>
