@@ -469,10 +469,19 @@ a:hover {
 
 .shot img {
   display: block;
-  width: 100%;
+  max-width: 100%;
   height: auto;
   border: 1px solid var(--rule);
   border-radius: 2px;
+}
+
+/* Paired plates cap their height so a portrait capture beside a landscape one
+   does not stretch the row to the portrait's full height. */
+
+.shots.pair .shot img {
+  max-height: 22rem;
+  width: auto;
+  margin-inline: auto;
 }
 
 .shot figcaption {
