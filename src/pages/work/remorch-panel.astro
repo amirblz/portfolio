@@ -1,0 +1,112 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+
+<Base
+  title="Remorch admin panel — an upgrade where the framework was the cheap part"
+  description="Taking a live admin panel three Angular majors forward and zoneless, where the real cost was 53 components that had been repainting by luck."
+  path="/work/remorch-panel"
+>
+  <a class="back" href="/">Index</a>
+
+  <h1 class="lede">The upgrade was the cheap part</h1>
+  <p class="standfirst">
+    The panel the desk runs orders, customers and payouts from. Three Angular majors in one pass,
+    zoneless, and a grid library that moved the floor underneath it.
+  </p>
+
+  <dl class="dossier">
+    <div>
+      <dt>Surface</dt>
+      <dd>Internal admin: orders, customers, partners, financial, support</dd>
+    </div>
+    <div>
+      <dt>Work</dt>
+      <dd>Angular 19 to 22, zoneless, ag-grid 33 to 36, standalone migration, test toolchain</dd>
+    </div>
+    <div>
+      <dt>Stack</dt>
+      <dd>Angular 22, ag-grid 36, ECharts, vitest</dd>
+    </div>
+  </dl>
+
+  <div class="prose">
+    <h2>Ranking the cost before starting</h2>
+    <p>
+      Framework majors are mostly mechanical. What actually costs time is everything that changes
+      meaning underneath them, so the plan opened by ranking the drivers rather than the versions.
+    </p>
+    <p>
+      Zoneless with OnPush by default came first: 53 components change change-detection semantics at
+      once, around 16 of them had async paths that were repainting by luck, and the repo contained
+      zero explicit change-detector calls to lean on while sorting that out. Second was the grid
+      library's own major, which collapses nine or more scroll containers into one and renames the
+      layout classes — four style overrides sat directly in that blast radius. TypeScript's major
+      was checked and turned out to be a non-event for this configuration, which is worth measuring
+      rather than fearing.
+    </p>
+    <p>
+      Two declared dependencies were imported nowhere at all. Deleting them removed a forcing
+      function that would otherwise have dragged an error-reporting library through its own major
+      upgrade, in service of code that did not exist.
+    </p>
+
+    <h2>The same problem, answered the other way</h2>
+    <p>
+      The component library that was deleted from the
+      <a href="/work/remorch-pay">payment gateway</a> stayed here, on the registered free tier. That
+      is not an inconsistency. The payment page used six component instances and is public; removing
+      them was an afternoon, and refusing a third-party banner over a payment form is worth more than
+      the afternoon. The admin panel is built out of that library across every screen, and it is
+      internal. The cost of removal and the cost of the risk both invert, so the decision inverts
+      with them.
+    </p>
+
+    <h2>Verification, and one objection on the record</h2>
+    <p>
+      Verification was a before-and-after sweep across roughly twenty routes with accessibility
+      checks injected into the same sweep, running against a read-only proxy so the comparison used
+      real shapes of data rather than optimistic fixtures. The test toolchain moved in the same pass,
+      three older specs rewritten and the previous runner dropped.
+    </p>
+    <p>
+      The delivery decision was one squashed commit. I argued against it and was overruled, so it is
+      recorded in the plan where the next person will find it: a grid regression, a zoneless repaint
+      bug and a compiler error all land in one undifferentiated diff, with no CI to separate them.
+      Losing that argument is fine. Losing it silently would have left whoever bisects it later with
+      no idea the trade was made deliberately.
+    </p>
+  </div>
+
+  <section class="shots">
+    <figure class="shot">
+      <img
+        src="/work/remorch-panel/orders-grid.webp"
+        alt="The all-orders grid with type, status and submission-time columns, and identifying columns blurred"
+        width="1440"
+        height="810"
+        loading="lazy"
+      />
+      <figcaption>
+        The orders grid: server-side sort and search, infinite scroll, per-type tabs. Order and
+        account columns are blurred here — the grid is production, and who trades with whom is not
+        mine to publish.
+      </figcaption>
+    </figure>
+    <figure class="shot">
+      <img
+        src="/work/remorch-panel/payments-empty.webp"
+        alt="The payments tab showing a loading overlay above an empty-state message"
+        width="1440"
+        height="810"
+        loading="lazy"
+      />
+      <figcaption>
+        The state most grids get wrong: loading and empty are different answers, and a tab that has
+        no rows yet should say so rather than spin forever.
+      </figcaption>
+    </figure>
+  </section>
+
+  <p><a class="action" href="/work/remorch-app">The wallet, and a signature that went missing</a></p>
+</Base>

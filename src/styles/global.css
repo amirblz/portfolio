@@ -450,3 +450,86 @@ a:hover {
     padding: 4.5rem 3rem;
   }
 }
+
+/* Case-study plates — wider than the prose measure, because the point is the pixels */
+
+.shots {
+  display: grid;
+  gap: 1px;
+  margin: 2rem 0;
+  background: var(--rule);
+  border-block: 1px solid var(--rule);
+}
+
+.shot {
+  margin: 0;
+  padding: 1rem;
+  background: var(--ink);
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+}
+
+.shot figcaption {
+  margin-top: 0.65rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.diagram {
+  margin: 2rem 0;
+  padding: 1.5rem 1rem;
+  border-block: 1px solid var(--rule);
+}
+
+.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.dossier {
+  margin: 0 0 2rem;
+  border-top: 1px solid var(--rule);
+}
+
+.dossier div {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 0 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.dossier dt {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--dim);
+  padding-top: 0.2rem;
+}
+
+.dossier dd {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--dim);
+}
+
+@media (min-width: 48rem) {
+  .shots.pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}

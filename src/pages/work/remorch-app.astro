@@ -1,0 +1,130 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+
+<Base
+  title="Remorch wallet — a ticket that was three defects"
+  description="A rejection that vanished after signing turned out to be three separate faults, one of which silenced failures across the whole app."
+  path="/work/remorch-app"
+>
+  <a class="back" href="/">Index</a>
+
+  <h1 class="lede">One ticket, three defects</h1>
+  <p class="standfirst">
+    The wallet PWA. A swap took the user's signature and then did nothing: no message, no
+    navigation, no record. The ticket described one fault. The code had three.
+  </p>
+
+  <dl class="dossier">
+    <div>
+      <dt>Surface</dt>
+      <dd>Wallet PWA: buy, sell, transfer, swap, credit</dd>
+    </div>
+    <div>
+      <dt>Work</dt>
+      <dd>Signing-flow rewrite, error taxonomy, login failure messages</dd>
+    </div>
+    <div>
+      <dt>Stack</dt>
+      <dd>Angular, RxJS, multi-chain signing strategies</dd>
+    </div>
+  </dl>
+
+  <div class="prose">
+    <h2>Reading past the report</h2>
+    <p>
+      A bug report names a symptom. This one said a rejection after signing became an unhandled
+      rejection. Following it through the code found three independent faults stacked on each other,
+      and the report named one.
+    </p>
+    <p>
+      <strong>The promise was never awaited.</strong> Four order-creation paths kicked off the
+      signing flow inside an operator that discards whatever it returns. The stream completed on the
+      HTTP response, so the rejection had nothing left to land in.
+    </p>
+    <p>
+      <strong>The escaped rejection was then swallowed deliberately.</strong> The global handler did
+      receive it, and did unwrap it correctly — then returned early for anything shaped like an HTTP
+      error. A failed submit is exactly that shape, so it produced no message and no telemetry. That
+      early return was not swap-specific: it silenced every failed order creation in the app.
+    </p>
+    <p>
+      <strong>A swap signs twice, and the second leg was orphaned.</strong> When the server asked for
+      a second signature, the second leg was started fire-and-forget from inside the first leg's
+      stream. Leg one resolved on its own response, before leg two had even opened its dialog, and
+      leg two logged its errors to the console and subscribed with no error handler. For a swap, that
+      is the likeliest mechanism of taking a signature and doing nothing.
+    </p>
+    <p>
+      Fixing only the path the ticket described would have left the other two live, and left every
+      non-swap flow just as silent.
+    </p>
+
+    <h2>What the rewrite had to guarantee</h2>
+    <p>
+      Signing is the one place in a wallet where ordinary error-handling habits are actively
+      dangerous. The usual instincts — attach the original error as a cause, log the object for
+      debugging, put the server's message in the toast — all end with key material or a signed
+      payload somewhere it was never meant to be.
+    </p>
+    <p>
+      So the chain was built so that no strategy error object is ever retained, re-thrown, wrapped as
+      a cause or displayed. Failures are narrowed into a fixed set of categories and the category
+      string is the entire message; the server's text never reaches the user. Cancelling is a
+      category too — no toast, still navigates, nothing to telemetry. The response-caching layer
+      cannot hold a signed payload, because it declines anything that is not a GET.
+    </p>
+
+    <h2>The gate that caught what I missed</h2>
+    <p>
+      Work on this path goes through a dedicated review before merge. Mine came back blocked, with
+      seven things to fix and eight to consider — the most serious being that the interface, as
+      rewritten, still let the caller drive repeated signing without asking again.
+    </p>
+    <p>
+      That is the review working. The containment design held up and the confidentiality rules were
+      met, and the sequencing was still wrong in a way that only a reader looking specifically for it
+      would catch. Defects found outside the scope of the change went into a separate file rather
+      than into the review, so the review stayed about the diff and the rest still got recorded.
+    </p>
+
+    <h2>While we were in there: login errors</h2>
+    <p>
+      The same area had a smaller, related problem. A failed login produced two generic toasts in
+      succession, and every cause produced the same pair — wrong phrase, wrong passcode, rejected
+      account, all indistinguishable. The phrase step validated only that twelve non-empty words had
+      been typed.
+    </p>
+    <p>
+      Each cause now says what happened, and says it once.
+    </p>
+  </div>
+
+  <section class="shots pair">
+    <figure class="shot">
+      <img
+        src="/work/remorch-app/login-before.webp"
+        alt="Login screen showing a generic failure toast"
+        width="1440"
+        height="810"
+        loading="lazy"
+      />
+      <figcaption>Before: one message for every cause.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img
+        src="/work/remorch-app/login-after.webp"
+        alt="Login screen stating that the secret phrase entered is invalid"
+        width="1440"
+        height="810"
+        loading="lazy"
+      />
+      <figcaption>
+        After: the phrase is checked, and the message names what was wrong. Test vector words, not
+        anyone's wallet.
+      </figcaption>
+    </figure>
+  </section>
+
+  <p><a class="action" href="/work/zhambon">Zhambon, where the interesting part is the deployment</a></p>
+</Base>
