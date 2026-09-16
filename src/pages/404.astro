@@ -1,0 +1,31 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="Not found — Amir Balazade"
+  description="That page does not exist on this site."
+  path="/404"
+>
+  <h1 class="lede">No such page</h1>
+  <p class="standfirst">
+    Nothing is served at that address. The work is all one click away.
+  </p>
+
+  <section class="work" aria-label="Where to go instead">
+    <a class="work-row" href="/">
+      <span class="work-when">index</span>
+      <span>
+        <span class="work-name">Selected work</span>
+        <p class="work-note">Four case studies and two demos you can open.</p>
+      </span>
+    </a>
+    <a class="work-row" href="/cv">
+      <span class="work-when">cv</span>
+      <span>
+        <span class="work-name">The full CV</span>
+        <p class="work-note">Seven years, four companies, and a PDF if you prefer one.</p>
+      </span>
+    </a>
+  </section>
+</Base>
