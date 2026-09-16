@@ -53,16 +53,15 @@ import Base from "../../layouts/Base.astro";
       and the box spends its life being scanned.
     </p>
     <p>
-      It is not open. A tunnel connector inside the network dials
-      <em>outward</em> to the edge and holds the connection open, so traffic arrives through a
-      channel the origin established. The firewall allows SSH and nothing else. Ports 80 and 443 are
+      It is not open. A tunnel connector inside the network dials <em>outward</em> to the edge and
+      holds the connection open, so traffic arrives through a channel the origin established. The firewall allows SSH and nothing else. Ports 80 and 443 are
       closed and the origin's address never appears in DNS — the public records point at the tunnel,
       not at the machine.
     </p>
   </div>
 
   <div class="diagram">
-    <svg viewBox="0 0 800 500" role="img" aria-labelledby="topology-title topology-desc">
+    <svg viewBox="0 0 800 430" role="img" aria-labelledby="topology-title topology-desc">
       <title id="topology-title">Deployment topology for zhambon.com</title>
       <desc id="topology-desc">
         A browser reaches the Cloudflare edge, which carries traffic through a tunnel that the
@@ -82,8 +81,8 @@ import Base from "../../layouts/Base.astro";
       </g>
 
       <g class="d-frame">
-        <rect x="40" y="200" width="720" height="290" rx="2"></rect>
-        <rect x="60" y="254" width="680" height="220" rx="2"></rect>
+        <rect x="40" y="200" width="720" height="222" rx="2"></rect>
+        <rect x="60" y="254" width="680" height="152" rx="2"></rect>
       </g>
 
       <g class="d-line">
