@@ -3,28 +3,24 @@ import Base from "../layouts/Base.astro";
 
 const work = [
   {
-    when: "since 2024",
     name: "Remorch, payment gateway",
     note: "The page customers pay through. Going zoneless meant removing a component library instead of licensing it.",
     stack: "Angular 22, signals, zoneless, native dialog",
     href: "/work/remorch-pay",
   },
   {
-    when: "since 2024",
     name: "Remorch, admin panel",
     note: "Three Angular majors in one pass on a live panel. The hard part was 53 components changing how they repaint.",
     stack: "Angular 22, ag-grid 36, ECharts, vitest",
     href: "/work/remorch-panel",
   },
   {
-    when: "since 2024",
     name: "Remorch, wallet",
     note: "A swap took the signature and did nothing. The ticket named one bug. The code had three.",
     stack: "Angular, RxJS, multi-chain signing",
     href: "/work/remorch-app",
   },
   {
-    when: "since 2025",
     name: "Zhambon",
     note: "An investment-pool app for four roles that see the same numbers. The server has no inbound ports.",
     stack: "Angular PWA, Caddy, Docker, Cloudflare Tunnel",
@@ -58,21 +54,6 @@ const work = [
     Seven years of Angular and TypeScript, mostly in fintech and web3: order books, payment flows,
     and admin panels full of tables and charts. Based in Istanbul, working remotely.
   </p>
-
-  <dl class="figures">
-    <div>
-      <dt>Years in Angular</dt>
-      <dd>7+</dd>
-    </div>
-    <div>
-      <dt>Traders on live data</dt>
-      <dd>5,000+</dd>
-    </div>
-    <div>
-      <dt>Demos you can open</dt>
-      <dd>2</dd>
-    </div>
-  </dl>
 
   <section class="work" aria-label="Selected work">
     {
