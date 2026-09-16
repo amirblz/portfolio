@@ -5,59 +5,48 @@ const demo = "https://cairn.abalazade.workers.dev";
 ---
 
 <Base
-  title="CAIRN — a scroll-driven product story"
-  description="A demo storefront for an invented flask brand: one scroll position drives a 3D product story, and the same page holds a working bag."
+  title="CAIRN: a scroll-driven product page"
+  description="A demo store for a made-up flask brand: one scroll position drives a 3D product page, and the same page has a working bag."
   path="/work/cairn"
 >
   <a class="back" href="/">Index</a>
 
   <h1 class="lede">CAIRN</h1>
   <p class="standfirst">
-    An invented insulated flask brand. One scroll drives a 3D product story, and the same page holds
-    a working bag.
+    A made-up flask brand. Scrolling drives a 3D product page, and the same page has a working bag.
   </p>
 
   <p><a class="action" href={demo}>Open the demo</a></p>
 
   <div class="prose">
-    <h2>The problem it answers</h2>
+    <h2>Why it's built this way</h2>
     <p>
-      Scroll-driven product pages usually run several animations at once and spend their life
-      fighting to stay in sync. Stop halfway through a section and the camera says one thing while
-      the copy says another. This page cannot do that, because everything on it is a function of a
-      single number.
-    </p>
-
-    <h2>Decisions worth explaining</h2>
-    <p>
-      <strong>One timeline, not five animations.</strong> Scroll position becomes one number in act
-      units — act index plus progress through that act. Camera, explode distance, spin, scale, copy
-      opacity and the temperature readouts are all functions of it. Acts hand off at whole numbers,
-      which is why nothing snaps at a boundary.
+      Scroll-driven product pages usually run several animations and fight to keep them in sync.
+      Stop halfway and the camera says one thing while the text says another. Here everything reads
+      from a single number, so that can't happen.
     </p>
     <p>
-      <strong>The flask is geometry, not a photograph.</strong> Four lathe profiles, a torus for the
-      seal, and a canvas gradient turned into an environment map at runtime. No model file, no image
-      sequence, nothing to download but the library. Changing colourway lerps the material and sweeps
-      the key light, so the switch reads as a relight rather than a repaint.
+      <strong>One timeline.</strong> Scroll position becomes one number: the section index plus
+      progress through it. Camera, exploded view, spin, scale, text fade and temperatures all come
+      from it, so nothing jumps between sections.
     </p>
     <p>
-      <strong>The cooling act is a model, not a canned animation.</strong> Newton's law of cooling
-      with two time constants, one for the vacuum wall and one for a single-wall bottle. Scrub the
-      hours and both numbers are computed live — which is exactly why the same function can be
-      asserted in a test.
+      <strong>The flask is geometry.</strong> Four lathe shapes, a torus for the seal, and a canvas
+      gradient used as the lighting environment. No model file and no images to download.
+      Switching colour sweeps the key light across it, so it looks relit, not repainted.
     </p>
     <p>
-      <strong>Commerce rules are pure and tested.</strong> Stock per variant, quantity capped at what
-      is really left including what is already in the bag, sold-out colourways struck through rather
-      than removed, money formatted through <code>Intl.NumberFormat</code>. Thirty-nine assertions
-      cover it, in the browser or under Node.
+      <strong>The cooling section is a real model.</strong> Newton's law of cooling, run live for
+      the flask and for a plain bottle. Because it's a function, a test can check it.
     </p>
-
-    <h2>Craft notes</h2>
-    <ul>
-      <li>Reduced-motion visitors get a static layout with the same content and the same bag.</li>
-      <li>No build step. three.js loads from a CDN; everything else is three files and some maths.</li>
-    </ul>
+    <p>
+      <strong>The shop rules are tested.</strong> Stock per colour, quantity capped at what's left
+      (counting what's already in the bag), and sold-out colours crossed out instead of hidden.
+      Thirty-nine assertions cover it, in the browser or in Node.
+    </p>
+    <p>
+      With reduced motion on, you get a static layout with the same content and bag. There's no
+      build step: three.js comes from a CDN and the rest is plain files.
+    </p>
   </div>
 </Base>

@@ -3,17 +3,16 @@ import Base from "../../layouts/Base.astro";
 ---
 
 <Base
-  title="Zhambon — four roles, one codebase, no open ports"
-  description="An investment-pool platform where investor, trader, accountant and admin read the same numbers, deployed behind an outbound-only tunnel with no inbound ports on the origin."
+  title="Zhambon: four roles, one codebase, no open ports"
+  description="An investment-pool platform where investor, trader, accountant and admin read the same numbers, served from an origin with no inbound ports."
   path="/work/zhambon"
 >
   <a class="back" href="/">Index</a>
 
   <h1 class="lede">Four roles, one codebase</h1>
   <p class="standfirst">
-    An investment-pool platform. Investors, traders, accountants and admins read the same numbers
-    and are allowed to do very different things with them — and the origin server has no inbound
-    ports at all.
+    An investment-pool platform. Investors, traders, accountants and admins see the same numbers
+    but can do very different things with them. The server has no inbound ports open.
   </p>
 
   <dl class="dossier">
@@ -32,31 +31,20 @@ import Base from "../../layouts/Base.astro";
   </dl>
 
   <div class="prose">
-    <h2>Domains, not layers</h2>
+    <h2>Split by role, not by layer</h2>
     <p>
-      The obvious way to organise a four-audience app is by technical layer — all the services here,
-      all the components there — and it works right up until a change to what a trader may see has
-      to be traced through six folders that each know a little about everyone.
-    </p>
-    <p>
-      So the app is cut by domain instead. Admin, investor, trader and accountant each own their
-      features, services, stores and routes. Domains do not import from each other; anything two of
-      them genuinely share is promoted deliberately into shared or core, which makes promotion a
-      decision somebody makes rather than an accident of an import statement. The question "who can
-      see this number" has one place to look.
+      Grouping a four-role app by layer works until you have to trace what a trader may see through
+      six folders that each know a little about everyone. So each role owns its own features,
+      services, stores and routes. Roles don't import from each other. Anything two of them share
+      gets moved into shared code on purpose, so "who can see this number" has one place to look.
     </p>
 
     <h2>Nothing dials in</h2>
     <p>
-      The part worth showing is not the front end. A finance product on a small VPS is a standing
-      invitation: the moment ports 80 and 443 are open to the world, the origin's address is public
-      and the box spends its life being scanned.
-    </p>
-    <p>
-      It is not open. A tunnel connector inside the network dials <em>outward</em> to the edge and
-      holds the connection open, so traffic arrives through a channel the origin established. The firewall allows SSH and nothing else. Ports 80 and 443 are
-      closed and the origin's address never appears in DNS — the public records point at the tunnel,
-      not at the machine.
+      A finance app on a small VPS gets scanned all day once ports 80 and 443 are open. Here they
+      aren't. A tunnel connector inside the network dials <em>out</em> to Cloudflare and keeps the
+      connection open, so traffic comes in over a channel the server opened. The firewall allows
+      SSH and nothing else, and DNS points at the tunnel, never at the server's address.
     </p>
   </div>
 
@@ -123,28 +111,23 @@ import Base from "../../layouts/Base.astro";
   </div>
 
   <div class="prose">
-    <h2>Same origin, on purpose</h2>
+    <h2>One origin</h2>
     <p>
-      The browser never addresses the API host. The app calls a path on its own origin, and the
-      reverse proxy inside the network decides whether that path is the API or the app shell. There
-      is no second origin to configure CORS for, no preflight on every call, and no API hostname
-      sitting in a bundle for anyone to point a script at.
+      The browser never talks to an API host. The app calls a path on its own origin, and Caddy
+      decides whether that path goes to the API or the app. That means no CORS setup, no preflight
+      on every call, and no API hostname in the bundle.
     </p>
 
     <h2>Deploys that leave nothing behind</h2>
     <p>
-      A push to the main branch builds the image and pushes it to the registry tagged with the
-      commit. The deploy step then connects to the server, hands it the job's own short-lived token
-      to authenticate the pull, updates the one container and logs out again.
-    </p>
-    <p>
-      The token expires with the job. There is no long-lived registry credential living on the
-      machine for someone who gets a shell to find later, which is the sort of thing that sits
-      unnoticed on a box for years.
+      A push to main builds an image tagged with the commit. The deploy step logs the server into
+      the registry with the job's own short-lived token, updates the container and logs out. The
+      token dies with the job, so no long-lived registry credential sits on the server for an
+      intruder to find.
     </p>
   </div>
 
-  <p><a class="action" href="/work/remorch-pay">Remorch, where the dependency had to go</a></p>
+  <p><a class="action" href="/work/remorch-pay">Remorch, where a dependency had to go</a></p>
 </Base>
 
 <style>

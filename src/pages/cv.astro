@@ -7,7 +7,7 @@ const bullets = core.roles as Record<string, string[]>;
 ---
 
 <Base
-  title="Amir Balazade — CV"
+  title="Amir Balazade | CV"
   description="Seven years of front-end engineering in fintech and web3: Angular, TypeScript, real-time trading views and payment flows."
   path="/cv"
 >
@@ -31,7 +31,7 @@ const bullets = core.roles as Record<string, string[]>;
         </div>
         <p class="cv-title">
           {role.title}, {role.context}
-          {role.arrangement ? ` — ${role.arrangement}` : ""}
+          {role.arrangement ? `. ${role.arrangement}` : ""}
         </p>
         <ul>
           {bullets[role.id]?.map((line) => <li>{line}</li>)}
@@ -61,7 +61,7 @@ const bullets = core.roles as Record<string, string[]>;
       {
         base.projects.map((project) => (
           <li>
-            <strong>{project.name}</strong> — {project.description}
+            <strong>{project.name}</strong>: {project.description}
           </li>
         ))
       }

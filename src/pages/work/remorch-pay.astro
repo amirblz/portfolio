@@ -3,16 +3,16 @@ import Base from "../../layouts/Base.astro";
 ---
 
 <Base
-  title="Remorch payment gateway — deleting a dependency instead of licensing it"
-  description="Taking a customer-facing crypto payment page from Angular 20 to 22 and zoneless, which meant removing a component library rather than paying to keep it."
+  title="Remorch payment gateway: deleting a dependency instead of licensing it"
+  description="Moving a public crypto payment page to Angular 22 and zoneless meant removing a component library instead of paying to keep it."
   path="/work/remorch-pay"
 >
   <a class="back" href="/">Index</a>
 
   <h1 class="lede">The payment page, rebuilt</h1>
   <p class="standfirst">
-    The surface a customer actually pays through. Taking it from Angular 20 to 22 and dropping
-    zone.js meant first answering an awkward question about a component library.
+    The page customers pay through. Moving it from Angular 20 to 22 without zone.js meant dealing
+    with a component library first.
   </p>
 
   <dl class="dossier">
@@ -22,7 +22,7 @@ import Base from "../../layouts/Base.astro";
     </div>
     <div>
       <dt>Work</dt>
-      <dd>Framework upgrade, zoneless migration, dependency removal, pixel reconciliation</dd>
+      <dd>Angular upgrade, zoneless, dependency removal, matching the design</dd>
     </div>
     <div>
       <dt>Stack</dt>
@@ -30,126 +30,76 @@ import Base from "../../layouts/Base.astro";
     </div>
   </dl>
 
-  <div class="prose">
-    <h2>The dependency problem</h2>
-    <p>
-      The repo sat on Angular 20.3 while its sibling was already on 22, and every piece of shared
-      guidance had to be written twice, once per repo. Going zoneless was the other reason to move:
-      this is a public payment surface, and after an earlier ticket removed the state library there
-      was nothing zone-dependent left. Dropping zone.js takes a polyfill out of every bundle and a
-      whole category of "why did this not repaint" out of the app.
-    </p>
-    <p>
-      One thing blocked both. The component library in use peered Angular 17 or 18 and a zone
-      version two minors behind the installed one — both constraints already unmet before anyone
-      proposed an upgrade. It could not go to 21, could not go to 22, and was pinned to the exact
-      dependency being deleted.
-    </p>
-
-    <h2>Two ways out, and why one is not viable here</h2>
-    <p>
-      The library could be walked up rung by rung to its current major. That major introduces a
-      licence manager: an unregistered install renders a fixed-position banner inside a closed
-      shadow root with <code>all: initial</code>, on every page, with no quiet-degradation mode. The
-      free tier exists but the key is per-repository, seat-capped and dated.
-    </p>
-    <p>
-      On a page where someone is entering an amount and confirming a transfer, a third party that
-      can draw an unstyleable banner over the interface is not a dependency, it is a liability. The
-      app used six component instances from that library, one consumer each, plus 550 of the 670
-      lines in the theme partial styling components this app has never rendered.
-    </p>
-    <p>
-      Six components is an afternoon. The licence is forever. They came out, the action sheet became
-      a native <code>&lt;dialog&gt;</code>, and the upgrade went ahead with nothing peer-locking it.
-    </p>
-
-    <h2>The proof is that nothing happened</h2>
-    <p>
-      Every route was captured before and after, against a deterministic mock layer rather than
-      production, so the same eleven scenarios produce the same pixels on demand. Across the six
-      captured screens, four came out byte-for-byte identical to the originals. Two changed, both by
-      design: the currency sheet, which had been the library's action sheet and is now a native
-      dialog, and the amount card.
-    </p>
-  </div>
-
-  <section class="shots pair">
+  <section class="shots">
     <figure class="shot">
       <img
-        src="/work/remorch-pay/currency-sheet-before.webp"
-        alt="Currency picker rendered as a docked panel by the third-party component library"
-        width="1440"
-        height="810"
+        src="/work/remorch-pay/payment-link.webp"
+        alt="A payment link: a dark card showing 24.50 USDC on Polygon, beside pay and connect wallet buttons"
+        width="1160"
+        height="700"
         loading="lazy"
       />
-      <figcaption>Before: the library's action sheet, docked to the left edge.</figcaption>
-    </figure>
-    <figure class="shot">
-      <img
-        src="/work/remorch-pay/currency-sheet-after.webp"
-        alt="The same currency picker rendered as a native dialog element"
-        width="1440"
-        height="810"
-        loading="lazy"
-      />
-      <figcaption>After: a native dialog, no library, same job.</figcaption>
+      <figcaption>A payment link, ready to pay. All data here is mock.</figcaption>
     </figure>
   </section>
 
   <div class="prose">
-    <h2>Pixel reconciliation and the audit</h2>
+    <h2>What blocked the upgrade</h2>
     <p>
-      A later pass reconciled every frame against the design file at 1920, then proved the layout at
-      390, 768, 1024 and 1440. Divergences were fixed where the difference was ours and reported with
-      their node ids where it was not, rather than quietly conforming to whichever side happened to
-      be open. One rule overrode the design outright: interface titles are Title Case, because
-      consistency inside the product beats consistency with a file that nobody using the product can
-      see.
+      This repo was on Angular 20.3 while its sibling was on 22, so shared guidance had to be
+      written twice. Dropping zone.js also removes a polyfill from every bundle, along with a whole
+      class of "why didn't this repaint" bugs.
     </p>
     <p>
-      Accessibility ran as an audit in the same pass, with axe injected into the browser sweep rather
-      than run once at the end and declared clean.
+      The component library stood in the way. It expected Angular 17 or 18 and an older zone.js,
+      so it couldn't move to 21 or 22, and it depended on the exact package being removed.
+    </p>
+
+    <h2>Remove it instead of licensing it</h2>
+    <p>
+      The library's current major adds a license check. Without a key it draws a banner on every
+      page that the app can't style or hide. The free key is per repo, seat capped and expires.
+      That has no place over a form where people confirm a transfer.
+    </p>
+    <p>
+      The app used six of its components, and 550 of the 670 lines in its theme file styled
+      components it never rendered. Removing them took an afternoon. The currency sheet became a
+      native <code>&lt;dialog&gt;</code>, and the upgrade went ahead.
+    </p>
+
+    <h2>Proof that nothing broke</h2>
+    <p>
+      Every route was captured before and after. Four of six screens came out byte for byte
+      identical. The other two changed on purpose: the currency sheet and the amount card. A later
+      pass matched every screen to the design file and checked the layout from 390 to 1440 wide,
+      with axe running in the same sweep.
     </p>
   </div>
 
-  <section class="shots pair">
+  <section class="shots">
     <figure class="shot">
       <img
-        src="/work/remorch-pay/gateway-390.webp"
-        alt="The payment gateway at 390 pixels wide, with merchant details above the currency picker"
-        width="390"
-        height="1080"
+        src="/work/remorch-pay/payment-success.webp"
+        alt="The payment success screen with a receipt listing receiver, amount, network, rate and transaction hash"
+        width="1160"
+        height="1000"
         loading="lazy"
       />
-      <figcaption>390. Merchant details stack above the amount.</figcaption>
-    </figure>
-    <figure class="shot">
-      <img
-        src="/work/remorch-pay/gateway-1440.webp"
-        alt="The same payment gateway at 1440 pixels wide, in two columns"
-        width="1440"
-        height="1080"
-        loading="lazy"
-      />
-      <figcaption>1440. The same content, two columns.</figcaption>
+      <figcaption>The receipt after a successful payment.</figcaption>
     </figure>
   </section>
 
   <div class="prose">
-    <h2>What the mock layer bought</h2>
+    <h2>The mock layer</h2>
     <p>
-      The screenshots on this page contain no real customers, because the whole capture runs against
-      fixtures: an invented merchant, an invalid-by-design domain, a phone number from the reserved
-      range. Eleven scenarios cover the paths that are otherwise hard to reach on demand — expired,
-      already paid, wrong chain, user rejects, transaction reverts, slow, unsupported token.
+      No real customer appears in these screenshots. Captures run on fixtures: a made-up merchant, a
+      domain that can't resolve, a phone number from the reserved range. Eleven scenarios cover
+      paths that are hard to hit on demand, like an expired link, a wrong chain or a reverted
+      transaction.
     </p>
     <p>
-      It is a build-time file replacement rather than a runtime flag, which is the part that matters:
-      a marker string was verified absent from the production bundle and present in the mock one, and
-      the production bundle grew by 76 bytes for the two empty arrays left behind. Test scaffolding
-      that can be switched on in production is not scaffolding, it is a feature nobody wrote a spec
-      for.
+      The mocks are swapped in at build time, not behind a runtime flag. A marker string shows up in
+      the mock bundle and not in production, and the production bundle grew by 76 bytes.
     </p>
   </div>
 
