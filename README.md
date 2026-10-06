@@ -25,3 +25,15 @@ The two demos are separate repositories and separate Workers, linked from here:
 
 - OSSA — <https://ossa.abalazade.workers.dev>
 - CAIRN — <https://cairn.abalazade.workers.dev>
+
+## XP assets
+
+`public/xp/` holds Windows XP icons, sounds and the Bliss wallpaper, and `src/styles/vendor/xp.css` the
+window chrome. They come from:
+
+- Icons, sounds, Start button: [win32.run](https://github.com/ducbao414/win32.run) (MIT code; the art is Microsoft's)
+- Boot flag, Start menu avatar: [winXP](https://github.com/ShizukuIchi/winXP)
+- Bliss: the 4K copy on the Internet Archive (`windows-xp-4k`), resized to 1280, 1920 and 2560
+- Chrome: [XP.css](https://github.com/botoxparty/XP.css) 0.2.6, MIT, with its hosted fonts removed
+
+Windows XP, Bliss and the icons belong to Microsoft. This site is not affiliated with Microsoft.
