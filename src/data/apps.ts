@@ -22,7 +22,7 @@ export const apps: App[] = [
   { id: "remorch-app", title: "Remorch - Internet Explorer", icon: "ie", href: "/work/remorch-app", desktop: "Remorch", width: 960, height: 640 },
   { id: "remorch-panel", title: "Remorch Admin - Picture and Fax Viewer", icon: "picture-viewer", href: "/work/remorch-panel", desktop: "Remorch Admin", width: 900, height: 620 },
   { id: "remorch-pay", title: "Remorch Pay - Picture and Fax Viewer", icon: "picture-viewer", href: "/work/remorch-pay", desktop: "Remorch Pay", width: 900, height: 620 },
-  { id: "wordy", title: "wordy.cards Setup", icon: "setup", href: "/work/wordy", desktop: "wordy.cards", width: 600, height: 460 },
+  { id: "wordy", title: "wordy.cards Setup", icon: "setup", href: "/work/wordy", desktop: "wordy.cards", width: 600, height: 520 },
   { id: "wordy-live", title: "wordy.cards - Internet Explorer", icon: "ie", href: "/work/wordy/live", hidden: true, width: 960, height: 640 },
   { id: "zhambon", title: "Zhambon Setup", icon: "wizard", href: "/work/zhambon", desktop: "Zhambon", width: 760, height: 560 },
   { id: "demos", title: "Demos", icon: "folder-opened", desktop: "Demos", items: ["ossa", "cairn"], width: 420, height: 280 },

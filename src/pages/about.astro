@@ -24,14 +24,14 @@ import cv from "../data/cv.json";
             <dt>System:</dt>
             <dd>Amir Balazade</dd>
             <dd>Front-End Engineer</dd>
-            <dd>Version 7+ (since 2017)</dd>
+            <dd>Version 2017, Service Pack 7</dd>
             <dt>Registered to:</dt>
             <dd>whoever is reading this</dd>
             <dd class="sp-id">55274-AN6-TS22-RXJS</dd>
             <dt>Computer:</dt>
             <dd>Angular 22, TypeScript</dd>
             <dd>RxJS, signals, ag-grid</dd>
-            <dd>{cv.languages.join(", ")}</dd>
+            <dd>{cv.languages.map((l) => l.replace(/ \(.*\)/, "")).join(", ")}</dd>
           </dl>
         </div>
         <p class="sp-note">Not affiliated with Microsoft.</p>

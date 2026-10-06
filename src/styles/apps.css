@@ -488,6 +488,29 @@ html:not(.js) .pv-toolbar {
   padding: 16px 24px 16px 32px;
 }
 
+.wiz-shots {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.wiz-shots figure {
+  flex: 0 1 180px;
+  margin: 0;
+}
+
+.wiz-shots img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #7f9db9;
+}
+
+.wiz-shots figcaption {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
 .wiz-req {
   margin-top: 12px;
 }
