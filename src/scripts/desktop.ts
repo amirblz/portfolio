@@ -156,6 +156,7 @@ function register(el: HTMLElement, invoker?: HTMLElement | null) {
   const task = document.createElement("button");
   task.type = "button";
   task.className = "task";
+  task.dataset.task = id;
   task.innerHTML = `<img src="${iconSrc(el.dataset.icon ?? app?.icon ?? "folder-opened")}" alt="" width="16" height="16"><span></span>`;
   task.querySelector("span")!.textContent = app?.title ?? id;
   task.addEventListener("click", () => {
@@ -229,11 +230,15 @@ function close(win: Win) {
 }
 
 /** The address bar follows the active window, so any state can be shared as a link. */
-/** Folders have no route, so they leave the address and title as they are. */
+/** Folders have no route, so over one the address follows the topmost window that has one. */
 function syncLocation(push = false) {
-  if (active && !appById[active.id]?.href) return;
-  const href = active ? appById[active.id].href! : "/";
-  document.title = active?.el.dataset.doctitle ?? homeTitle;
+  const routed = (w: Win) => !!appById[w.id]?.href && !isMinimized(w);
+  let shown = active && routed(active) ? active : null;
+  if (active && !shown) {
+    for (const w of wins.values()) if (routed(w) && (!shown || Number(w.el.style.zIndex) > Number(shown.el.style.zIndex))) shown = w;
+  }
+  const href = shown ? appById[shown.id].href! : "/";
+  document.title = shown?.el.dataset.doctitle ?? homeTitle;
   if (location.pathname === href) return;
   history[push ? "pushState" : "replaceState"](null, "", href);
 }

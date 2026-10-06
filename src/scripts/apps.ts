@@ -138,7 +138,7 @@ function emptyBin(root: HTMLElement, sound = true) {
   root.querySelector<HTMLButtonElement>('[data-bin="empty"]')!.disabled = true;
   const empty = iconSrc("recycle-bin-empty");
   for (const img of document.querySelectorAll<HTMLImageElement>(
-    '[data-open="recycle-bin"] img, [data-window="recycle-bin"] .title-bar-icon',
+    '[data-open="recycle-bin"] img, [data-window="recycle-bin"] .title-bar-icon, [data-task="recycle-bin"] img',
   )) {
     img.src = empty;
     img.srcset = img.srcset ? `${empty} 1x, ${iconSrc("recycle-bin-empty", 96)} 3x` : "";
