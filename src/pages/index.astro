@@ -1,77 +1,42 @@
 ---
-import Base from "../layouts/Base.astro";
+import Desktop from "../layouts/Desktop.astro";
+import Window from "../components/Window.astro";
+import { appById, iconSrc } from "../data/apps";
 
-const work = [
-  {
-    name: "Remorch, payment gateway",
-    note: "The page customers pay through. Going zoneless meant removing a component library instead of licensing it.",
-    stack: "Angular 22, signals, zoneless, native dialog",
-    href: "/work/remorch-pay",
-  },
-  {
-    name: "Remorch, admin panel",
-    note: "Three Angular majors in one pass on a live panel. The hard part was 53 components changing how they repaint.",
-    stack: "Angular 22, ag-grid 36, ECharts, vitest",
-    href: "/work/remorch-panel",
-  },
-  {
-    name: "Remorch, wallet",
-    note: "A swap took the signature and did nothing. The ticket named one bug. The code had three.",
-    stack: "Angular, RxJS, multi-chain signing",
-    href: "/work/remorch-app",
-  },
-  {
-    name: "Zhambon",
-    note: "An investment-pool app for four roles that see the same numbers. The server has no inbound ports.",
-    stack: "Angular PWA, Caddy, Docker, Cloudflare Tunnel",
-    href: "/work/zhambon",
-  },
-  {
-    when: "demo",
-    name: "CAIRN",
-    note: "A flask you can turn, cool down and buy. One scroll position drives the whole page.",
-    stack: "three.js, no build step, 39 assertions",
-    href: "/work/cairn",
-  },
-  {
-    when: "demo",
-    name: "OSSA",
-    note: "A small-batch store with stock per size and colour. Sold-out sizes stay visible, crossed out.",
-    stack: "vanilla JS, no framework, no build step",
-    href: "/work/ossa",
-  },
-];
+const projects = ["remorch-app", "remorch-panel", "remorch-pay", "wordy", "zhambon", "demos"].map((id) => appById[id]);
 ---
 
-<Base
+<Desktop
   title="Amir Balazade, front-end engineer"
   description="Front-end engineer, seven years in Angular and TypeScript, most of it in fintech and web3."
   path="/"
 >
-  <h1 class="lede">I build the screens where a wrong number is noticed in seconds.</h1>
-
-  <p class="standfirst">
-    Seven years of Angular and TypeScript, mostly in fintech and web3: order books, payment flows,
-    and admin panels full of tables and charts. Based in Istanbul, working remotely.
-  </p>
-
-  <section class="work" aria-label="Selected work">
-    {
-      work.map((item) => {
-        const Row = item.href ? "a" : "div";
-        return (
-          <Row class="work-row" href={item.href}>
-            <span class="work-when">{item.when}</span>
-            <span>
-              <span class="work-name">{item.name}</span>
-              <p class="work-note">{item.note}</p>
-              <p class="work-stack">{item.stack}</p>
-            </span>
-          </Row>
-        );
-      })
-    }
-  </section>
-
-  <p><a class="action" href="/cv">Read the full CV</a></p>
-</Base>
+  <Window app="welcome" flush>
+    <div class="welcome">
+      <header class="welcome-head">
+        <img src="/photo.jpg" alt="" width="56" height="56" />
+        <div>
+          <h1>Amir Balazade</h1>
+          <p>Front-end engineer. I build the screens where a wrong number is noticed in seconds.</p>
+        </div>
+      </header>
+      <ul class="welcome-apps" aria-label="Projects">
+        {
+          projects.map((a) => (
+            <li>
+              <a class="welcome-app" href={a.href ?? `#${a.id}`} data-open={a.id}>
+                <img src={iconSrc(a.icon, 96)} alt="" width="48" height="48" />
+                <span>{a.desktop}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="welcome-foot">
+        <a href="/cv" data-open="cv">Resume.doc</a>
+        <a href="mailto:abalazade@gmail.com">abalazade@gmail.com</a>
+        <a href="https://linkedin.com/in/amirbalazade" rel="me">LinkedIn</a>
+      </p>
+    </div>
+  </Window>
+</Desktop>

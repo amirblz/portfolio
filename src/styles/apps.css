@@ -1,0 +1,78 @@
+/* What goes inside windows. Global on purpose: a window fetched from another route arrives without
+   that route's scoped styles, so every window's content is styled here. */
+
+/* ---------- Welcome ---------- */
+
+.welcome {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  min-height: 100%;
+  box-sizing: border-box;
+  color: #fff;
+  background: linear-gradient(160deg, #5a8be6, #2c5ccf 55%, #1d46b0);
+}
+
+.welcome-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.welcome-head img {
+  border: 2px solid #fff;
+  border-radius: 4px;
+  box-shadow: 1px 1px 4px rgb(0 0 0 / 0.4);
+}
+
+.welcome h1 {
+  margin: 0;
+  font: 700 22px "Trebuchet MS", Tahoma, sans-serif;
+  text-shadow: 1px 1px 2px #0c2e74;
+}
+
+.welcome-head p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.welcome-apps {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.welcome-app {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  border-radius: 6px;
+  color: #fff;
+  font: 700 12px Tahoma, sans-serif;
+  text-decoration: none;
+  background: rgb(255 255 255 / 0.12);
+}
+
+.welcome-app:hover,
+.welcome-app:focus-visible {
+  background: rgb(255 255 255 / 0.28);
+  outline: 1px dotted #fff;
+}
+
+.welcome-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: auto 0 0;
+}
+
+.welcome-foot a {
+  color: #fff;
+}

@@ -1,0 +1,222 @@
+---
+import "../styles/vendor/xp.css";
+import "../styles/desktop.css";
+import "../styles/apps.css";
+import { apps, appById, desktopIcon, iconSrc } from "../data/apps";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+}
+
+const { title, description, path } = Astro.props;
+
+const canonical = new URL(path, Astro.site);
+const preview = new URL("/og.png", Astro.site);
+
+const icon = (name: string) => ({
+  src: iconSrc(name),
+  srcset: `${iconSrc(name)} 1x, ${iconSrc(name, 96)} 3x`,
+});
+
+const desktop = apps.filter((a) => a.desktop);
+const pinned = [
+  { app: appById["remorch-app"], label: "Remorch", sub: "Internet Explorer" },
+  { app: appById.contact, label: "E-mail", sub: "Outlook Express" },
+];
+const recent = ["wordy", "zhambon", "remorch-panel", "remorch-pay"].map((id) => appById[id]);
+const places = [
+  { app: "cv", label: "My Documents", icon: "my-documents" },
+  { app: "demos", label: "Demos", icon: "folder-closed" },
+  { app: "about", label: "My Computer", icon: "my-computer" },
+  { app: "recycle-bin", label: "Recycle Bin", icon: "recycle-bin-full" },
+  { app: "welcome", label: "Welcome", icon: "tour-xp" },
+];
+const programs = apps.filter((a) => a.id !== "demos");
+
+// The Start menu shows a program's plain name, not its window title.
+const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={preview} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      href="/xp/bliss-1920.avif"
+      imagesrcset="/xp/bliss-1280.avif 1280w, /xp/bliss-1920.avif 1920w, /xp/bliss-2560.avif 2560w"
+      imagesizes="100vw"
+    />
+    <script is:inline>
+      // Boot once per session, and never for reduced motion. Runs before paint so the desktop
+      // doesn't flash first.
+      try {
+        if (!sessionStorage.getItem("xp-booted") && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          document.documentElement.classList.add("booting");
+        }
+      } catch {}
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body class="xp">
+    <div class="boot" id="boot" aria-hidden="true">
+      <div class="boot-logo">
+        <img src="/xp/ui/windows-flag.png" alt="" width="76" height="61" />
+        <p class="boot-name">Amir Balazade<span>Portfolio</span></p>
+      </div>
+      <div class="boot-bar"><span></span><span></span><span></span></div>
+    </div>
+
+    <main class="desktop" id="desktop">
+      <!-- Windows come first so Tab reaches the open window before the icons. -->
+      <div class="windows" id="windows">
+        <slot />
+      </div>
+      <nav class="desktop-icons" aria-label="Desktop">
+        {
+          desktop.map((a) => {
+            const img = icon(desktopIcon[a.id] ?? a.icon);
+            return (
+              <a class="desktop-icon" href={a.href ?? `#${a.id}`} data-open={a.id}>
+                <img src={img.src} srcset={img.srcset} alt="" width="32" height="32" />
+                <span>{a.desktop}</span>
+              </a>
+            );
+          })
+        }
+      </nav>
+    </main>
+
+    <div class="start-menu" id="start-menu" hidden>
+      <header class="start-head">
+        <img src="/xp/ui/user-chess.png" alt="" width="42" height="42" />
+        <span>Amir Balazade<small>Portfolio</small></span>
+      </header>
+      <div class="start-cols">
+        <ul class="start-left" role="menu" aria-label="Programs">
+          {
+            pinned.map(({ app: a, label, sub }) => (
+              <li role="none">
+                <a role="menuitem" class="start-item big" href={a.href} data-open={a.id}>
+                  <img {...icon(a.icon)} alt="" width="32" height="32" />
+                  <span>
+                    <b>{label}</b>
+                    <small>{sub}</small>
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+          <li role="separator" class="start-sep"></li>
+          {
+            recent.map((a) => (
+              <li role="none">
+                <a role="menuitem" class="start-item big" href={a.href} data-open={a.id}>
+                  <img {...icon(a.icon)} alt="" width="32" height="32" />
+                  <span>{short(a)}</span>
+                </a>
+              </li>
+            ))
+          }
+          <li role="separator" class="start-sep"></li>
+          <li role="none" class="start-all-wrap">
+            <button type="button" role="menuitem" class="start-all" aria-haspopup="menu" aria-expanded="false" id="start-all">
+              All Programs <img src={iconSrc("all-programs")} alt="" width="20" height="20" />
+            </button>
+            <ul class="start-programs" role="menu" aria-label="All Programs" id="start-programs" hidden>
+              {
+                programs.map((a) => (
+                  <li role="none">
+                    <a role="menuitem" class="start-item" href={a.href} data-open={a.id}>
+                      <img src={iconSrc(a.icon)} alt="" width="16" height="16" />
+                      <span>{short(a)}</span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </li>
+        </ul>
+        <ul class="start-right" role="menu" aria-label="Places">
+          {
+            places.map((p) => (
+              <li role="none">
+                <a role="menuitem" class="start-item" href={appById[p.app].href ?? `#${p.app}`} data-open={p.app}>
+                  <img {...icon(p.icon)} alt="" width="24" height="24" />
+                  <span>{p.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <footer class="start-foot">
+        <button type="button" data-power="logoff">
+          <img src={iconSrc("logout")} alt="" width="22" height="22" />Log Off
+        </button>
+        <button type="button" data-power="dialog">
+          <img src={iconSrc("power")} alt="" width="22" height="22" />Turn Off Computer
+        </button>
+      </footer>
+    </div>
+
+    <footer class="taskbar" id="taskbar">
+      <button type="button" class="start-button" id="start-button" aria-haspopup="menu" aria-expanded="false" aria-controls="start-menu">
+        <img src="/xp/ui/start-button.png" alt="Start" width="98" height="30" />
+      </button>
+      <nav class="tasks" id="tasks" aria-label="Open windows"></nav>
+      <div class="tray">
+        <button type="button" class="tray-sound" id="tray-sound" aria-pressed="true" aria-label="Sound">
+          <img src={iconSrc("volume")} alt="" width="16" height="16" />
+        </button>
+        <time class="tray-clock" id="tray-clock"></time>
+      </div>
+    </footer>
+
+    <div class="balloon" id="balloon" role="status" hidden>
+      <button type="button" class="balloon-close" aria-label="Close">×</button>
+      <p class="balloon-title"><img src={iconSrc("information")} alt="" width="16" height="16" />New portfolio items found</p>
+      <p>Click here to see what's on this desktop.</p>
+    </div>
+
+    <div class="power-dialog" id="power-dialog" role="dialog" aria-modal="true" aria-labelledby="power-title" hidden>
+      <div class="power-box">
+        <h2 id="power-title">Turn off portfolio</h2>
+        <div class="power-options">
+          <button type="button" data-power="restart"><img src={iconSrc("restart", 96)} alt="" width="33" height="33" />Restart</button>
+          <button type="button" data-power="shutdown"><img src={iconSrc("power", 96)} alt="" width="33" height="33" />Turn Off</button>
+        </div>
+        <button type="button" class="power-cancel" data-power="cancel">Cancel</button>
+      </div>
+    </div>
+
+    <div class="shutdown" id="shutdown" hidden>
+      <p>It's now safe to turn off<br />your portfolio.</p>
+      <small>Click anywhere to start it again.</small>
+    </div>
+
+    <script>
+      import "../scripts/desktop";
+    </script>
+  </body>
+</html>

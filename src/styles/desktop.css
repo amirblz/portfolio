@@ -1,0 +1,861 @@
+/* The Windows XP desktop: Bliss, icons, taskbar, Start menu, tray and the screens around them.
+   Window chrome itself comes from vendor/xp.css; this file positions windows and fills the gaps. */
+
+:root {
+  --font: Tahoma, "Segoe UI", Verdana, sans-serif;
+  --taskbar: 30px;
+  --select: #316ac5;
+  --luna-bar: linear-gradient(#1f2f86 0, #3165c4 3%, #3682e5 6%, #4490e6 10%, #3883e5 12%, #2b71e0 15%,
+      #2663da 18%, #235bd6 20%, #2258d5 23%, #2157d6 38%, #245ddb 54%, #2562df 86%, #245fdc 89%,
+      #2158d4 92%, #1d4ec0 95%, #1941a5 98%);
+  --luna-tray: linear-gradient(#0c59b9 1%, #139ee9 6%, #18b5f2 10%, #139beb 14%, #1290e8 19%, #0d8dea 63%,
+      #0d9ff1 81%, #0f9eed 88%, #119be9 91%, #1392e2 94%, #137ed7 97%, #095bc9 100%);
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body.xp {
+  font-family: var(--font);
+  font-size: 11px;
+  color: #000;
+  background: #3a6ea5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.xp :focus-visible {
+  outline: 1px dotted currentColor;
+  outline-offset: 1px;
+}
+
+/* ---------- desktop ---------- */
+
+.desktop {
+  position: fixed;
+  inset: 0 0 var(--taskbar) 0;
+  background: #3a6ea5 center / cover no-repeat;
+  background-image: image-set(url("/xp/bliss-1920.avif") type("image/avif"), url("/xp/bliss-1920.webp") type("image/webp"));
+  transition: filter 1.2s;
+}
+
+@media (max-width: 1280px) {
+  .desktop {
+    background-image: image-set(url("/xp/bliss-1280.avif") type("image/avif"), url("/xp/bliss-1280.webp") type("image/webp"));
+  }
+}
+
+@media (min-width: 1921px) {
+  .desktop {
+    background-image: image-set(url("/xp/bliss-2560.avif") type("image/avif"), url("/xp/bliss-2560.webp") type("image/webp"));
+  }
+}
+
+.desktop-icons {
+  position: absolute;
+  inset: 8px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(auto-fill, 74px);
+  grid-auto-columns: 78px;
+  gap: 4px 2px;
+  align-content: start;
+}
+
+.desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 2px;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.2;
+  outline: none;
+}
+
+.desktop-icon img {
+  width: 32px;
+  height: 32px;
+}
+
+.desktop-icon span {
+  padding: 0 2px;
+  text-shadow: 1px 1px 1px #000, 0 0 2px #000;
+}
+
+.desktop-icon:focus img,
+.desktop-icon.selected img {
+  filter: brightness(0.7) sepia(1) hue-rotate(180deg) saturate(4);
+  opacity: 0.85;
+}
+
+.desktop-icon:focus span,
+.desktop-icon.selected span {
+  background: var(--select);
+  text-shadow: none;
+}
+
+.desktop-icon:focus-visible span {
+  outline: 1px dotted #fff;
+}
+
+/* ---------- windows ---------- */
+
+.windows {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.windows > .window {
+  pointer-events: auto;
+}
+
+/* Without JS the route's window just sits in the middle of the desktop. */
+.window {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  max-width: calc(100% - 16px);
+  max-height: calc(100% - 16px);
+  margin: 40px auto 0;
+  width: 640px;
+}
+
+.js .windows > .window {
+  position: absolute;
+  margin: 0;
+  max-width: none;
+  max-height: none;
+}
+
+.js .windows > .window[data-state="minimized"] {
+  display: none;
+}
+
+.windows > .window.maximized {
+  inset: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 0;
+}
+
+.window .title-bar {
+  flex: none;
+  gap: 4px;
+  user-select: none;
+  touch-action: none;
+}
+
+.window .title-bar-icon {
+  flex: none;
+  margin-left: 2px;
+}
+
+.window .title-bar-text {
+  flex: 1;
+  margin: 0;
+  overflow: hidden;
+  font: 700 13px "Trebuchet MS", var(--font);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-shadow: 1px 1px #0f1089;
+}
+
+.window .title-bar-controls button:focus-visible {
+  outline: 1px dotted #fff;
+  outline-offset: -4px;
+}
+
+.window .window-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  font-size: 11px;
+}
+
+.window .window-body.flush {
+  margin: 0;
+}
+
+.window.inactive .title-bar {
+  background: linear-gradient(#9db9eb, #7b9ce6 10%, #7593e1 90%, #6c8ad8);
+}
+
+.window.inactive .title-bar-text {
+  color: #d8e4f8;
+  text-shadow: none;
+}
+
+.window.inactive .title-bar-controls button {
+  opacity: 0.75;
+}
+
+.window.opening {
+  animation: open 0.16s ease-out;
+}
+
+@keyframes open {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+}
+
+.rz {
+  position: absolute;
+  z-index: 1;
+}
+.rz-n, .rz-s { left: 6px; right: 6px; height: 6px; cursor: ns-resize; }
+.rz-e, .rz-w { top: 6px; bottom: 6px; width: 6px; cursor: ew-resize; }
+.rz-n { top: -3px; }
+.rz-s { bottom: -3px; }
+.rz-e { right: -3px; }
+.rz-w { left: -3px; }
+.rz-ne, .rz-nw, .rz-se, .rz-sw { width: 12px; height: 12px; }
+.rz-ne { top: -3px; right: -3px; cursor: nesw-resize; }
+.rz-sw { bottom: -3px; left: -3px; cursor: nesw-resize; }
+.rz-nw { top: -3px; left: -3px; cursor: nwse-resize; }
+.rz-se { bottom: -3px; right: -3px; cursor: nwse-resize; }
+
+.maximized .rz {
+  display: none;
+}
+
+/* Folder windows built on the client. */
+.folder {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+  padding: 12px;
+  min-height: 100%;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.folder .desktop-icon {
+  width: 76px;
+  color: #000;
+}
+
+.folder .desktop-icon span {
+  text-shadow: none;
+}
+
+.folder .desktop-icon:focus span {
+  color: #fff;
+}
+
+/* ---------- taskbar ---------- */
+
+.taskbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 900;
+  display: flex;
+  align-items: stretch;
+  height: var(--taskbar);
+  background: var(--luna-bar);
+  transition: filter 1.2s;
+}
+
+.start-button {
+  flex: none;
+  padding: 0;
+  margin: 0 8px 0 0;
+  border: 0;
+  min-width: 0;
+  min-height: 0;
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.start-button img {
+  display: block;
+  height: 30px;
+  width: auto;
+}
+
+.start-button:hover img {
+  filter: brightness(1.1);
+}
+
+.start-button[aria-expanded="true"] img {
+  filter: brightness(0.85);
+}
+
+.start-button:focus-visible {
+  outline: 1px dotted #fff;
+  outline-offset: -4px;
+}
+
+.tasks {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+  min-width: 0;
+  padding: 3px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tasks::-webkit-scrollbar {
+  display: none;
+}
+
+.task {
+  flex: 0 1 160px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 40px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 2px;
+  color: #fff;
+  font: 11px var(--font);
+  text-align: left;
+  background: #3c81f3;
+  box-shadow: inset -1px 0 #1c4aac, inset 1px 1px #8cb4f8;
+  cursor: pointer;
+}
+
+.task:hover {
+  background: #53a3ff;
+}
+
+.task[aria-pressed="true"] {
+  background: #1e52b7;
+  box-shadow: inset 1px 1px 2px #0c2e74;
+}
+
+.task span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.task:focus-visible {
+  outline: 1px dotted #fff;
+  outline-offset: -3px;
+}
+
+.tray {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px 0 10px;
+  margin-left: 6px;
+  color: #fff;
+  background: var(--luna-tray);
+  border-left: 1px solid #1042af;
+  box-shadow: inset 1px 0 1px #18bbff;
+}
+
+.tray-sound {
+  display: grid;
+  place-items: center;
+  padding: 2px;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.tray-sound:focus-visible {
+  outline: 1px dotted #fff;
+}
+
+.tray-clock {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* ---------- Start menu ---------- */
+
+.start-menu {
+  position: fixed;
+  left: 0;
+  bottom: var(--taskbar);
+  z-index: 950;
+  display: flex;
+  flex-direction: column;
+  width: 380px;
+  max-width: 100vw;
+  max-height: calc(100dvh - var(--taskbar));
+  border-radius: 7px 7px 0 0;
+  overflow: visible;
+  background: #4282d6;
+  box-shadow: 2px 2px 8px rgb(0 0 0 / 0.5);
+  font-size: 11px;
+}
+
+.start-menu[hidden] {
+  display: none;
+}
+
+.start-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 7px 7px 0 0;
+  color: #fff;
+  font: 700 14px "Trebuchet MS", var(--font);
+  text-shadow: 1px 1px 2px #0c2e74;
+  background: linear-gradient(#1868ce, #0e60cb 12%, #0e60cb 20%, #1164cf 32%, #1667cf 33%, #1b6cd3 47%,
+      #1e70d9 54%, #2476dc 60%, #2a7fe2 65%, #2e84e5 77%, #2a80e1 79%, #1f73d9 90%, #1a6dd5 100%);
+}
+
+.start-head img {
+  border: 2px solid #fff;
+  border-radius: 3px;
+  box-shadow: 0 0 2px #000;
+}
+
+.start-head small {
+  display: block;
+  font: 11px var(--font);
+  opacity: 0.85;
+}
+
+.start-cols {
+  display: flex;
+  min-height: 0;
+  border-top: 2px solid #f2a33a;
+}
+
+.start-cols ul {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.start-left {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.start-right {
+  flex: 1;
+  background: #d3e5fa;
+  border-left: 1px solid #95bdee;
+}
+
+.start-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  color: #000;
+  text-decoration: none;
+  outline: none;
+}
+
+.start-item.big {
+  padding: 4px 8px;
+}
+
+.start-item b {
+  display: block;
+}
+
+.start-item small {
+  display: block;
+  color: #6d6d6d;
+}
+
+.start-right .start-item {
+  color: #0c3383;
+  font-weight: 700;
+}
+
+.start-item:hover,
+.start-item:focus,
+.start-all:hover,
+.start-all:focus,
+.start-all[aria-expanded="true"] {
+  color: #fff;
+  background: var(--select);
+}
+
+.start-item:hover small,
+.start-item:focus small {
+  color: #fff;
+}
+
+.start-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: linear-gradient(90deg, transparent, #c5c5c5 30%, #c5c5c5 70%, transparent);
+}
+
+.start-all-wrap {
+  margin-top: auto;
+}
+
+.start-all {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px;
+  border: 0;
+  min-height: 0;
+  font: 700 11px var(--font);
+  background: none;
+  box-shadow: none;
+}
+
+.start-programs {
+  position: absolute;
+  left: 100%;
+  bottom: 0;
+  min-width: 200px;
+  padding: 2px 0 !important;
+  background: #fff;
+  border: 1px solid #95bdee;
+  box-shadow: 2px 2px 4px rgb(0 0 0 / 0.4);
+}
+
+.start-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 6px;
+  background: linear-gradient(#4282d6, #3b85e0 3%, #418ae3 5%, #418ae3 17%, #3c87e2 21%, #3786e4 26%,
+      #3482e3 29%, #2e7ee1 39%, #2374df 49%, #2072db 57%, #196edb 62%, #176bd8 72%, #1468d6 75%,
+      #1166d6 83%, #0d61d3 88%, #095dd1 94%, #0858cc 100%);
+}
+
+.start-foot button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border: 0;
+  min-height: 0;
+  min-width: 0;
+  color: #fff;
+  font: 11px var(--font);
+  background: none;
+  box-shadow: none;
+}
+
+.start-foot button:hover,
+.start-foot button:focus-visible {
+  background: rgb(255 255 255 / 0.15);
+  outline: none;
+}
+
+/* ---------- tray balloon ---------- */
+
+.balloon {
+  position: fixed;
+  right: 12px;
+  bottom: calc(var(--taskbar) + 14px);
+  z-index: 920;
+  width: 250px;
+  padding: 8px 26px 8px 10px;
+  border: 1px solid #000;
+  border-radius: 8px;
+  background: #ffffe1;
+  box-shadow: 2px 2px 4px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+}
+
+.balloon::before,
+.balloon::after {
+  content: "";
+  position: absolute;
+  right: 40px;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.balloon::before {
+  bottom: -16px;
+  border-width: 16px 0 0 16px;
+  border-top-color: #000;
+}
+
+.balloon::after {
+  right: 41px;
+  bottom: -14px;
+  border-width: 14px 0 0 14px;
+  border-top-color: #ffffe1;
+}
+
+.balloon p {
+  margin: 0;
+}
+
+.balloon-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px !important;
+  font-weight: 700;
+}
+
+.balloon-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 14px;
+  min-width: 0;
+  height: 14px;
+  min-height: 0;
+  padding: 0;
+  border: 1px solid #a0a0a0;
+  border-radius: 2px;
+  font: 11px/1 var(--font);
+  background: #ffffe1;
+  box-shadow: none;
+}
+
+/* ---------- boot ---------- */
+
+.boot {
+  display: none;
+}
+
+.booting .boot {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  background: #000;
+  cursor: wait;
+}
+
+.boot-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.boot-name {
+  margin: 0;
+  color: #fff;
+  font: 700 34px/1 "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  letter-spacing: -1px;
+}
+
+.boot-name span {
+  display: block;
+  margin-top: 4px;
+  color: #ff8d26;
+  font: italic 700 18px/1 "Franklin Gothic Medium", Arial, sans-serif;
+  text-align: right;
+}
+
+.boot-bar {
+  position: relative;
+  width: 150px;
+  height: 14px;
+  overflow: hidden;
+  border: 2px solid #b2b2b2;
+  border-radius: 4px;
+}
+
+.boot-bar span {
+  position: absolute;
+  top: 2px;
+  left: -30px;
+  width: 8px;
+  height: 10px;
+  border-radius: 1px;
+  background: linear-gradient(#2838c7, #3c69e8 30%, #4c7cf0 50%, #3c69e8 70%, #2838c7);
+  animation: boot 1.6s linear infinite;
+}
+
+.boot-bar span:nth-child(2) { margin-left: 10px; }
+.boot-bar span:nth-child(3) { margin-left: 20px; }
+
+@keyframes boot {
+  to {
+    transform: translateX(190px);
+  }
+}
+
+/* ---------- turn off ---------- */
+
+.powering .desktop,
+.powering .taskbar {
+  filter: grayscale(1);
+}
+
+.power-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 980;
+  display: grid;
+  place-items: center;
+}
+
+.power-dialog[hidden] {
+  display: none;
+}
+
+.power-box {
+  width: 312px;
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+  border: 1px solid #00136b;
+  background: #fff;
+  box-shadow: 4px 4px 12px rgb(0 0 0 / 0.5);
+}
+
+.power-box h2 {
+  margin: 0;
+  padding: 10px 12px;
+  color: #fff;
+  font: 400 18px var(--font);
+  background: #0b2f8f;
+}
+
+.power-options {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 24px 12px;
+  background: linear-gradient(#5a7edc, #375fc4);
+  border-block: 2px solid #b0c4f4;
+}
+
+.power-options button,
+.power-cancel {
+  min-width: 0;
+  min-height: 0;
+  font: 11px var(--font);
+}
+
+.power-options button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border: 0;
+  color: #fff;
+  background: none;
+  box-shadow: none;
+}
+
+.power-options button:hover img {
+  filter: brightness(1.2);
+}
+
+.power-options button:focus-visible {
+  outline: 1px dotted #fff;
+}
+
+.power-cancel {
+  display: block;
+  margin: 8px 12px 8px auto;
+  padding: 3px 14px;
+}
+
+.shutdown {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px;
+  color: #f28d00;
+  text-align: center;
+  background: #000;
+  cursor: pointer;
+}
+
+.shutdown[hidden] {
+  display: none;
+}
+
+.shutdown p {
+  margin: 0;
+  font: 700 clamp(22px, 5vw, 40px)/1.3 var(--font);
+}
+
+.shutdown small {
+  color: #777;
+  font-size: 12px;
+}
+
+/* ---------- phone: one maximized window at a time, taskbar as tabs ---------- */
+
+@media (max-width: 640px) {
+  .desktop-icons {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    grid-template-rows: none;
+    grid-auto-rows: 74px;
+  }
+
+  .windows > .window {
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .window .title-bar-controls [data-action="maximize"],
+  .window .rz {
+    display: none;
+  }
+
+  .start-button img {
+    height: 30px;
+  }
+
+  .task {
+    flex: 0 0 auto;
+    max-width: 140px;
+  }
+
+  .start-programs {
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    max-height: 60dvh;
+    overflow-y: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .window.opening {
+    animation: none;
+  }
+
+  .desktop,
+  .taskbar {
+    transition: none;
+  }
+}

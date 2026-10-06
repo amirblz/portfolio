@@ -1,0 +1,39 @@
+---
+import { appById, iconSrc } from "../data/apps";
+
+interface Props {
+  /** An id from src/data/apps.ts. */
+  app: string;
+  class?: string;
+  /** Content runs edge to edge, without the default body margin. */
+  flush?: boolean;
+}
+
+const { app: id, class: extra, flush } = Astro.props;
+const app = appById[id];
+if (!app) throw new Error(`Window: unknown app "${id}"`);
+---
+
+<section
+  class:list={["window", extra]}
+  data-window={app.id}
+  data-href={app.href}
+  data-icon={app.icon}
+  data-width={app.width}
+  data-height={app.height}
+  role="dialog"
+  aria-labelledby={`${app.id}-title`}
+>
+  <div class="title-bar">
+    <img class="title-bar-icon" src={iconSrc(app.icon)} alt="" width="16" height="16" />
+    <h2 class="title-bar-text" id={`${app.id}-title`}>{app.title}</h2>
+    <div class="title-bar-controls">
+      <button type="button" aria-label="Minimize" data-action="minimize"></button>
+      <button type="button" aria-label="Maximize" data-action="maximize"></button>
+      <button type="button" aria-label="Close" data-action="close"></button>
+    </div>
+  </div>
+  <div class:list={["window-body", { flush }]}>
+    <slot />
+  </div>
+</section>
