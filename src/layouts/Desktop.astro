@@ -59,14 +59,11 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link
-      rel="preload"
-      as="image"
-      type="image/avif"
-      href="/xp/bliss-1920.avif"
-      imagesrcset="/xp/bliss-1280.avif 1280w, /xp/bliss-1920.avif 1920w, /xp/bliss-2560.avif 2560w"
-      imagesizes="100vw"
-    />
+    <!-- Same breakpoints as .desktop in desktop.css, so the preload is the file the wallpaper uses. -->
+    <link rel="preload" as="image" type="image/avif" href="/xp/bliss-640.avif" media="(max-width: 640px)" />
+    <link rel="preload" as="image" type="image/avif" href="/xp/bliss-1280.avif" media="(min-width: 641px) and (max-width: 1280px)" />
+    <link rel="preload" as="image" type="image/avif" href="/xp/bliss-1920.avif" media="(min-width: 1281px) and (max-width: 1920px)" />
+    <link rel="preload" as="image" type="image/avif" href="/xp/bliss-2560.avif" media="(min-width: 1921px)" />
     <script is:inline>
       // Boot once per session, and never for reduced motion. Runs before paint so the desktop
       // doesn't flash first.
@@ -81,7 +78,7 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
   <body class="xp">
     <div class="boot" id="boot" aria-hidden="true">
       <div class="boot-logo">
-        <img src="/xp/ui/windows-flag.png" alt="" width="76" height="61" />
+        <img src="/xp/ui/windows-flag.png" loading="lazy" alt="" width="76" height="61" />
         <p class="boot-name">Amir Balazade<span>Portfolio</span></p>
       </div>
       <div class="boot-bar"><span></span><span></span><span></span></div>
@@ -109,7 +106,7 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
 
     <div class="start-menu" id="start-menu" hidden>
       <header class="start-head">
-        <img src="/xp/ui/user-chess.png" alt="" width="42" height="42" />
+        <img src="/xp/ui/user-chess.png" loading="lazy" alt="" width="42" height="42" />
         <span>Amir Balazade<small>Portfolio</small></span>
       </header>
       <div class="start-cols">
@@ -118,7 +115,7 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
             pinned.map(({ app: a, label, sub }) => (
               <li role="none">
                 <a role="menuitem" class="start-item big" href={a.href} data-open={a.id}>
-                  <img {...icon(a.icon)} alt="" width="32" height="32" />
+                  <img {...icon(a.icon)} loading="lazy" alt="" width="32" height="32" />
                   <span>
                     <b>{label}</b>
                     <small>{sub}</small>
@@ -132,7 +129,7 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
             recent.map((a) => (
               <li role="none">
                 <a role="menuitem" class="start-item big" href={a.href} data-open={a.id}>
-                  <img {...icon(a.icon)} alt="" width="32" height="32" />
+                  <img {...icon(a.icon)} loading="lazy" alt="" width="32" height="32" />
                   <span>{short(a)}</span>
                 </a>
               </li>
@@ -141,14 +138,14 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
           <li role="separator" class="start-sep"></li>
           <li role="none" class="start-all-wrap">
             <button type="button" role="menuitem" class="start-all" aria-haspopup="menu" aria-expanded="false" id="start-all">
-              All Programs <img src={iconSrc("all-programs")} alt="" width="20" height="20" />
+              All Programs <img src={iconSrc("all-programs")} loading="lazy" alt="" width="20" height="20" />
             </button>
             <ul class="start-programs" role="menu" aria-label="All Programs" id="start-programs" hidden>
               {
                 programs.map((a) => (
                   <li role="none">
                     <a role="menuitem" class="start-item" href={a.href} data-open={a.id}>
-                      <img src={iconSrc(a.icon)} alt="" width="16" height="16" />
+                      <img src={iconSrc(a.icon)} loading="lazy" alt="" width="16" height="16" />
                       <span>{short(a)}</span>
                     </a>
                   </li>
@@ -162,7 +159,7 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
             places.map((p) => (
               <li role="none">
                 <a role="menuitem" class="start-item" href={appById[p.app].href ?? `#${p.app}`} data-open={p.app}>
-                  <img {...icon(p.icon)} alt="" width="24" height="24" />
+                  <img {...icon(p.icon)} loading="lazy" alt="" width="24" height="24" />
                   <span>{p.label}</span>
                 </a>
               </li>
@@ -172,10 +169,10 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
       </div>
       <footer class="start-foot">
         <button type="button" data-power="logoff">
-          <img src={iconSrc("logout")} alt="" width="22" height="22" />Log Off
+          <img src={iconSrc("logout")} loading="lazy" alt="" width="22" height="22" />Log Off
         </button>
         <button type="button" data-power="dialog">
-          <img src={iconSrc("power")} alt="" width="22" height="22" />Turn Off Computer
+          <img src={iconSrc("power")} loading="lazy" alt="" width="22" height="22" />Turn Off Computer
         </button>
       </footer>
     </div>
@@ -203,8 +200,8 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
       <div class="power-box">
         <h2 id="power-title">Turn off portfolio</h2>
         <div class="power-options">
-          <button type="button" data-power="restart"><img src={iconSrc("restart", 96)} alt="" width="33" height="33" />Restart</button>
-          <button type="button" data-power="shutdown"><img src={iconSrc("power", 96)} alt="" width="33" height="33" />Turn Off</button>
+          <button type="button" data-power="restart"><img src={iconSrc("restart", 96)} loading="lazy" alt="" width="33" height="33" />Restart</button>
+          <button type="button" data-power="shutdown"><img src={iconSrc("power", 96)} loading="lazy" alt="" width="33" height="33" />Turn Off</button>
         </div>
         <button type="button" class="power-cancel" data-power="cancel">Cancel</button>
       </div>

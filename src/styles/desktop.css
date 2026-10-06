@@ -48,6 +48,13 @@ body.xp {
   }
 }
 
+/* Phones keep every window maximized, so the wallpaper barely shows: the smallest file will do. */
+@media (max-width: 640px) {
+  .desktop {
+    background-image: image-set(url("/xp/bliss-640.avif") type("image/avif"), url("/xp/bliss-640.webp") type("image/webp"));
+  }
+}
+
 @media (min-width: 1921px) {
   .desktop {
     background-image: image-set(url("/xp/bliss-2560.avif") type("image/avif"), url("/xp/bliss-2560.webp") type("image/webp"));
@@ -129,11 +136,28 @@ body.xp {
   width: 640px;
 }
 
+/* First paint matches place() in desktop.ts, so the window doesn't jump when the script runs. */
 .js .windows > .window {
+  --ww: min(var(--w, 640px), 100% - 16px);
+  --wh: min(var(--h, 480px), 100% - 16px);
   position: absolute;
+  left: clamp(8px, (100% - var(--ww)) / 2 - 60px, 100% - var(--ww) - 8px);
+  top: clamp(8px, (100% - var(--wh)) / 2 - 60px, 100% - var(--wh) - 8px);
+  width: var(--ww);
+  height: var(--wh);
   margin: 0;
   max-width: none;
   max-height: none;
+}
+
+/* Above the resize handles, so a click near the corner closes rather than resizes. */
+.window .title-bar-controls {
+  position: relative;
+  z-index: 2;
+}
+
+.window .title-bar-controls button {
+  margin-left: 3px;
 }
 
 .js .windows > .window[data-state="minimized"] {

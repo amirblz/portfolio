@@ -603,9 +603,10 @@ document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
   if (!powerDialog.hidden) return hidePower();
   if (!startMenu.hidden) return closeStart(true);
+  const focused = winOf(document.activeElement);
+  if (focused) return close(focused);
   if (!balloon.hidden) return hideBalloon();
-  const win = winOf(document.activeElement) ?? (document.activeElement === document.body ? active : null);
-  if (win) close(win);
+  if (active && document.activeElement === document.body) close(active);
 });
 
 /* ---------- start-up ---------- */

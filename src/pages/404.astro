@@ -33,6 +33,14 @@
         outline: 1px dotted #fff;
         outline-offset: 2px;
       }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
       .caret {
         animation: blink 1s steps(1) infinite;
       }
@@ -50,7 +58,7 @@
   </head>
   <body>
     <main>
-      <h1 hidden>Page not found</h1>
+      <h1 class="sr-only">Page not found</h1>
       <p>A problem has been detected and your portfolio has been shut down to prevent damage to your browser.</p>
       <p>PAGE_NOT_FOUND</p>
       <p>If this is the first time you've seen this Stop error screen, check the address for typos.</p>

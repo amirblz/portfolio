@@ -21,6 +21,7 @@ if (!app) throw new Error(`Window: unknown app "${id}"`);
   data-icon={app.icon}
   data-width={app.width}
   data-height={app.height}
+  style={`--w: ${app.width ?? 640}px; --h: ${app.height ?? 480}px`}
   role="dialog"
   aria-labelledby={`${app.id}-title`}
 >

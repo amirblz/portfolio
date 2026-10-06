@@ -16,6 +16,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # A stale Vite cache once built pages with no stylesheet and no error: never ship that.
+      - run: ls dist/_astro/*.css
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

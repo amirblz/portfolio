@@ -17,7 +17,7 @@ import cv from "../data/cv.json";
         <button type="button" role="tab" id="sp-tab-hardware" aria-controls="sp-hardware" aria-selected="false" tabindex="-1">Hardware</button>
       </menu>
 
-      <article role="tabpanel" id="sp-general" aria-labelledby="sp-tab-general" class="current">
+      <div role="tabpanel" id="sp-general" aria-labelledby="sp-tab-general" class="current">
         <div class="sp-general">
           <img class="sp-logo" src="/xp/ui/windows-flag.png" alt="" width="76" height="61" />
           <dl>
@@ -35,9 +35,9 @@ import cv from "../data/cv.json";
           </dl>
         </div>
         <p class="sp-note">Not affiliated with Microsoft.</p>
-      </article>
+      </div>
 
-      <article role="tabpanel" id="sp-name" aria-labelledby="sp-tab-name">
+      <div role="tabpanel" id="sp-name" aria-labelledby="sp-tab-name">
         <dl class="sp-rows">
           <dt>Full computer name:</dt>
           <dd>amirbalazade.ir</dd>
@@ -48,9 +48,9 @@ import cv from "../data/cv.json";
           <dt>Education:</dt>
           <dd>{cv.education.degree}, {cv.education.dates}</dd>
         </dl>
-      </article>
+      </div>
 
-      <article role="tabpanel" id="sp-hardware" aria-labelledby="sp-tab-hardware">
+      <div role="tabpanel" id="sp-hardware" aria-labelledby="sp-tab-hardware">
         <p class="sp-dm"><img src="/xp/icons/32/my-computer.png" alt="" width="16" height="16" />Device Manager</p>
         <ul class="tree-view">
           {
@@ -66,7 +66,7 @@ import cv from "../data/cv.json";
             ))
           }
         </ul>
-      </article>
+      </div>
 
       <div class="sp-buttons">
         <button type="button" data-close>OK</button>
