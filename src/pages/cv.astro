@@ -1,9 +1,14 @@
 ---
 import Base from "../layouts/Base.astro";
-import base from "../data/cv-base.json";
-import core from "../data/cv-core.json";
+import cv from "../data/cv.json";
 
-const bullets = core.roles as Record<string, string[]>;
+/** Escaped text, with the `**figure**` markers the CV source uses reaching the page as bold. */
+const rich = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/[*][*](.+?)[*][*]/g, "<strong>$1</strong>");
 ---
 
 <Base
@@ -11,8 +16,8 @@ const bullets = core.roles as Record<string, string[]>;
   description="Seven years of front-end engineering in fintech and web3: Angular, TypeScript, real-time trading views and payment flows."
   path="/cv"
 >
-  <h1 class="lede">{base.name}</h1>
-  <p class="standfirst">{core.summary}</p>
+  <h1 class="lede">{cv.name}</h1>
+  <p class="standfirst" set:html={rich(cv.summary)} />
 
   <p>
     <a class="action" href="/amir-balazade-cv.pdf" download>Download as PDF</a>
@@ -23,7 +28,7 @@ const bullets = core.roles as Record<string, string[]>;
   </div>
 
   {
-    base.roles.map((role) => (
+    cv.roles.map((role) => (
       <article class="cv-post">
         <div class="cv-head">
           <span class="cv-company">{role.company}</span>
@@ -34,8 +39,29 @@ const bullets = core.roles as Record<string, string[]>;
           {role.arrangement ? `. ${role.arrangement}` : ""}
         </p>
         <ul>
-          {bullets[role.id]?.map((line) => <li>{line}</li>)}
+          {role.bullets.map((line) => <li set:html={rich(line)} />)}
         </ul>
+      </article>
+    ))
+  }
+
+  <div class="prose">
+    <h2>Projects</h2>
+  </div>
+
+  {
+    cv.projects.map((project) => (
+      <article class="cv-post">
+        <div class="cv-head">
+          <span class="cv-company">{project.name}</span>
+          {project.dates && <span class="cv-dates">{project.dates}</span>}
+        </div>
+        <p class="cv-title">{project.description}</p>
+        {project.bullets && (
+          <ul>
+            {project.bullets.map((line) => <li set:html={rich(line)} />)}
+          </ul>
+        )}
       </article>
     ))
   }
@@ -46,7 +72,7 @@ const bullets = core.roles as Record<string, string[]>;
 
   <dl class="cv-skills">
     {
-      core.skills.map((group) => (
+      cv.skills.map((group) => (
         <div>
           <dt>{group.label}</dt>
           <dd>{group.items.join(", ")}</dd>
@@ -56,23 +82,12 @@ const bullets = core.roles as Record<string, string[]>;
   </dl>
 
   <div class="prose">
-    <h2>Projects</h2>
-    <ul>
-      {
-        base.projects.map((project) => (
-          <li>
-            <strong>{project.name}</strong>: {project.description}
-          </li>
-        ))
-      }
-    </ul>
-
     <h2>Education</h2>
     <p>
-      {base.education.degree}, {base.education.institution}, {base.education.dates}
+      {cv.education.degree}, {cv.education.institution}, {cv.education.dates}
     </p>
 
     <h2>Languages</h2>
-    <p>{base.languages.join(", ")}</p>
+    <p>{cv.languages.join(", ")}</p>
   </div>
 </Base>

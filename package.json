@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "assets": "node make-assets.mjs"
+    "assets": "node make-assets.mjs",
+    "cv:sync": "node scripts/sync-cv.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
