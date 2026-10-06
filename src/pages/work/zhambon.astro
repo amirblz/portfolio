@@ -1,171 +1,89 @@
 ---
-import Base from "../../layouts/Base.astro";
+import Desktop from "../../layouts/Desktop.astro";
+import Window from "../../components/Window.astro";
+import Wizard from "../../components/Wizard.astro";
+import WizardPage from "../../components/WizardPage.astro";
 ---
 
-<Base
-  title="Zhambon: four roles, one codebase, no open ports"
-  description="An investment-pool platform where investor, trader, accountant and admin read the same numbers, served from an origin with no inbound ports."
+<Desktop
+  title="Zhambon: an investment pool platform"
+  description="An investment-pool PWA for investors, traders, accountants and admins: Angular, NestJS and PostgreSQL, behind a tunnel with no open ports."
   path="/work/zhambon"
 >
-  <a class="back" href="/">Index</a>
+  <Window app="zhambon" flush>
+    <Wizard icon="wizard" finish={{ href: "https://zhambon.com" }}>
+      <WizardPage title="Welcome to the Zhambon Setup Wizard" banner>
+        <p>An investment pool app. Investors, traders, accountants and admins read the same numbers, each with their own tools.</p>
+        <p>It replaced a spreadsheet month end and saves the fund 6 hours a week.</p>
+        <p>To continue, click Next.</p>
+      </WizardPage>
+      <WizardPage title="Build" subtitle="Angular PWA, NestJS, PostgreSQL, an AI assistant.">
+        <p>The assistant answers from the fund's own data. The server has no inbound ports: traffic arrives through a tunnel it opened.</p>
+        <div class="diagram">
+        <svg viewBox="0 0 800 430" role="img" aria-labelledby="topology-title topology-desc">
+          <title id="topology-title">Deployment topology for zhambon.com</title>
+          <desc id="topology-desc">
+            A browser reaches the Cloudflare edge, which carries traffic through a tunnel that the
+            origin opened outward. Inside the server, a tunnel connector passes requests to Caddy, which
+            serves the static app and proxies API calls to the NestJS server, which talks to Postgres,
+            Redis and Ollama. The firewall permits SSH only.
+          </desc>
 
-  <h1 class="lede">Four roles, one codebase</h1>
-  <p class="standfirst">
-    An investment-pool platform. Investors, traders, accountants and admins see the same numbers
-    but can do very different things with them. The server has no inbound ports open.
-  </p>
+          <g class="d-box">
+            <rect x="320" y="8" width="160" height="40" rx="2"></rect>
+            <rect x="160" y="80" width="480" height="58" rx="2"></rect>
+            <rect x="80" y="292" width="130" height="48" rx="2"></rect>
+            <rect x="248" y="292" width="110" height="48" rx="2"></rect>
+            <rect x="400" y="268" width="150" height="44" rx="2"></rect>
+            <rect x="400" y="342" width="150" height="44" rx="2"></rect>
+            <rect x="590" y="268" width="150" height="44" rx="2"></rect>
+          </g>
 
-  <dl class="dossier">
-    <div>
-      <dt>Surface</dt>
-      <dd>Investor, trader, accountant and admin, in one installable app</dd>
-    </div>
-    <div>
-      <dt>Work</dt>
-      <dd>Front-end architecture, deployment topology, delivery pipeline</dd>
-    </div>
-    <div>
-      <dt>Stack</dt>
-      <dd>Angular PWA, Caddy, Docker Compose, Cloudflare Tunnel, NestJS, Postgres</dd>
-    </div>
-  </dl>
+          <g class="d-frame">
+            <rect x="40" y="200" width="720" height="222" rx="2"></rect>
+            <rect x="60" y="254" width="680" height="152" rx="2"></rect>
+          </g>
 
-  <div class="prose">
-    <h2>Split by role, not by layer</h2>
-    <p>
-      Grouping a four-role app by layer works until you have to trace what a trader may see through
-      six folders that each know a little about everyone. So each role owns its own features,
-      services, stores and routes. Roles don't import from each other. Anything two of them share
-      gets moved into shared code on purpose, so "who can see this number" has one place to look.
-    </p>
+          <g class="d-line">
+            <path d="M400 48 L400 76"></path>
+            <path d="M210 316 L242 316"></path>
+            <path d="M358 308 L396 292"></path>
+            <path d="M358 326 L396 360"></path>
+            <path d="M550 290 L586 290"></path>
+          </g>
 
-    <h2>Nothing dials in</h2>
-    <p>
-      A finance app on a small VPS gets scanned all day once ports 80 and 443 are open. Here they
-      aren't. A tunnel connector inside the network dials <em>out</em> to Cloudflare and keeps the
-      connection open, so traffic comes in over a channel the server opened. The firewall allows
-      SSH and nothing else, and DNS points at the tunnel, never at the server's address.
-    </p>
-  </div>
+          <g class="d-tunnel">
+            <path d="M400 290 L400 142"></path>
+          </g>
 
-  <div class="diagram">
-    <svg viewBox="0 0 800 430" role="img" aria-labelledby="topology-title topology-desc">
-      <title id="topology-title">Deployment topology for zhambon.com</title>
-      <desc id="topology-desc">
-        A browser reaches the Cloudflare edge, which carries traffic through a tunnel that the
-        origin opened outward. Inside the server, a tunnel connector passes requests to Caddy, which
-        serves the static app and proxies API calls to the NestJS server, which talks to Postgres,
-        Redis and Ollama. The firewall permits SSH only.
-      </desc>
+          <g class="d-label">
+            <text x="400" y="33" text-anchor="middle">Browser</text>
+            <text x="400" y="107" text-anchor="middle" class="d-strong">Cloudflare edge</text>
+            <text x="400" y="125" text-anchor="middle">TLS, cache rules, rate limiting, bot filtering</text>
 
-      <g class="d-box">
-        <rect x="320" y="8" width="160" height="40" rx="2"></rect>
-        <rect x="160" y="80" width="480" height="58" rx="2"></rect>
-        <rect x="80" y="292" width="130" height="48" rx="2"></rect>
-        <rect x="248" y="292" width="110" height="48" rx="2"></rect>
-        <rect x="400" y="268" width="150" height="44" rx="2"></rect>
-        <rect x="400" y="342" width="150" height="44" rx="2"></rect>
-        <rect x="590" y="268" width="150" height="44" rx="2"></rect>
-      </g>
+            <text x="420" y="196">tunnel opened from the inside</text>
+            <text x="420" y="214">no inbound ports, origin address hidden</text>
 
-      <g class="d-frame">
-        <rect x="40" y="200" width="720" height="222" rx="2"></rect>
-        <rect x="60" y="254" width="680" height="152" rx="2"></rect>
-      </g>
+            <text x="56" y="224" class="d-strong">Origin server</text>
+            <text x="56" y="242">firewall: SSH only, 80 and 443 closed</text>
+            <text x="74" y="274">private container network</text>
 
-      <g class="d-line">
-        <path d="M400 48 L400 76"></path>
-        <path d="M210 316 L242 316"></path>
-        <path d="M358 308 L396 292"></path>
-        <path d="M358 326 L396 360"></path>
-        <path d="M550 290 L586 290"></path>
-      </g>
+            <text x="145" y="321" text-anchor="middle">tunnel connector</text>
+            <text x="303" y="321" text-anchor="middle">Caddy</text>
+            <text x="475" y="295" text-anchor="middle">API server</text>
+            <text x="475" y="369" text-anchor="middle">static app</text>
+            <text x="665" y="288" text-anchor="middle">Postgres, Redis,</text>
+            <text x="665" y="303" text-anchor="middle">Ollama</text>
 
-      <g class="d-tunnel">
-        <path d="M400 290 L400 142"></path>
-      </g>
-
-      <g class="d-label">
-        <text x="400" y="33" text-anchor="middle">Browser</text>
-        <text x="400" y="107" text-anchor="middle" class="d-strong">Cloudflare edge</text>
-        <text x="400" y="125" text-anchor="middle">TLS, cache rules, rate limiting, bot filtering</text>
-
-        <text x="420" y="196">tunnel opened from the inside</text>
-        <text x="420" y="214">no inbound ports, origin address hidden</text>
-
-        <text x="56" y="224" class="d-strong">Origin server</text>
-        <text x="56" y="242">firewall: SSH only, 80 and 443 closed</text>
-        <text x="74" y="274">private container network</text>
-
-        <text x="145" y="321" text-anchor="middle">tunnel connector</text>
-        <text x="303" y="321" text-anchor="middle">Caddy</text>
-        <text x="475" y="295" text-anchor="middle">API server</text>
-        <text x="475" y="369" text-anchor="middle">static app</text>
-        <text x="665" y="288" text-anchor="middle">Postgres, Redis,</text>
-        <text x="665" y="303" text-anchor="middle">Ollama</text>
-
-        <text x="366" y="288">/api</text>
-        <text x="366" y="352">else</text>
-      </g>
-    </svg>
-  </div>
-
-  <div class="prose">
-    <h2>One origin</h2>
-    <p>
-      The browser never talks to an API host. The app calls a path on its own origin, and Caddy
-      decides whether that path goes to the API or the app. That means no CORS setup, no preflight
-      on every call, and no API hostname in the bundle.
-    </p>
-
-    <h2>Deploys that leave nothing behind</h2>
-    <p>
-      A push to main builds an image tagged with the commit. The deploy step logs the server into
-      the registry with the job's own short-lived token, updates the container and logs out. The
-      token dies with the job, so no long-lived registry credential sits on the server for an
-      intruder to find.
-    </p>
-  </div>
-
-  <p><a class="action" href="/work/remorch-pay">Remorch, where a dependency had to go</a></p>
-</Base>
-
-<style>
-  .d-box rect {
-    fill: var(--panel);
-    stroke: var(--rule);
-    stroke-width: 1;
-  }
-
-  .d-frame rect {
-    fill: none;
-    stroke: var(--rule);
-    stroke-width: 1;
-    stroke-dasharray: 3 3;
-  }
-
-  .d-line path {
-    fill: none;
-    stroke: var(--dim);
-    stroke-width: 1;
-  }
-
-  .d-tunnel path {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 1.5;
-    stroke-dasharray: 5 4;
-  }
-
-  .d-label text {
-    fill: var(--dim);
-    font-family: var(--mono);
-    font-size: 11px;
-  }
-
-  .d-label .d-strong {
-    fill: var(--text);
-    font-size: 12px;
-    font-weight: 600;
-  }
-</style>
+            <text x="366" y="288">/api</text>
+            <text x="366" y="352">else</text>
+          </g>
+        </svg>
+        </div>
+      </WizardPage>
+      <WizardPage title="Completing the Zhambon Setup Wizard" banner>
+        <p>zhambon.com is live. Click Finish to open it.</p>
+      </WizardPage>
+    </Wizard>
+  </Window>
+</Desktop>

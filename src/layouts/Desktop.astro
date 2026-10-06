@@ -33,7 +33,7 @@ const places = [
   { app: "recycle-bin", label: "Recycle Bin", icon: "recycle-bin-full" },
   { app: "welcome", label: "Welcome", icon: "tour-xp" },
 ];
-const programs = apps.filter((a) => a.id !== "demos");
+const programs = apps.filter((a) => !a.items && !a.hidden);
 
 // The Start menu shows a program's plain name, not its window title.
 const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0];
@@ -217,6 +217,7 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
 
     <script>
       import "../scripts/desktop";
+      import "../scripts/apps";
     </script>
   </body>
 </html>

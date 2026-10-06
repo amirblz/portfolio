@@ -1,52 +1,17 @@
 ---
-import Base from "../../layouts/Base.astro";
-
-const demo = "https://cairn.abalazade.workers.dev";
+import Desktop from "../../layouts/Desktop.astro";
+import Window from "../../components/Window.astro";
+import Browser from "../../components/Browser.astro";
 ---
 
-<Base
-  title="CAIRN: a scroll-driven product page"
+<Desktop
+  title="CAIRN: a scroll-driven product page demo"
   description="A demo store for a made-up flask brand: one scroll position drives a 3D product page, and the same page has a working bag."
   path="/work/cairn"
 >
-  <a class="back" href="/">Index</a>
-
-  <h1 class="lede">CAIRN</h1>
-  <p class="standfirst">
-    A made-up flask brand. Scrolling drives a 3D product page, and the same page has a working bag.
-  </p>
-
-  <p><a class="action" href={demo}>Open the demo</a></p>
-
-  <div class="prose">
-    <h2>Why it's built this way</h2>
-    <p>
-      Scroll-driven product pages usually run several animations and fight to keep them in sync.
-      Stop halfway and the camera says one thing while the text says another. Here everything reads
-      from a single number, so that can't happen.
-    </p>
-    <p>
-      <strong>One timeline.</strong> Scroll position becomes one number: the section index plus
-      progress through it. Camera, exploded view, spin, scale, text fade and temperatures all come
-      from it, so nothing jumps between sections.
-    </p>
-    <p>
-      <strong>The flask is geometry.</strong> Four lathe shapes, a torus for the seal, and a canvas
-      gradient used as the lighting environment. No model file and no images to download.
-      Switching colour sweeps the key light across it, so it looks relit, not repainted.
-    </p>
-    <p>
-      <strong>The cooling section is a real model.</strong> Newton's law of cooling, run live for
-      the flask and for a plain bottle. Because it's a function, a test can check it.
-    </p>
-    <p>
-      <strong>The shop rules are tested.</strong> Stock per colour, quantity capped at what's left
-      (counting what's already in the bag), and sold-out colours crossed out instead of hidden.
-      Thirty-nine assertions cover it, in the browser or in Node.
-    </p>
-    <p>
-      With reduced motion on, you get a static layout with the same content and bag. There's no
-      build step: three.js comes from a CDN and the rest is plain files.
-    </p>
-  </div>
-</Base>
+  <Window app="cairn" flush>
+    <Browser url="https://cairn.abalazade.workers.dev" label="CAIRN demo store, live">
+      CAIRN: one scroll position drives a 3D flask, and the same page has a working bag.
+    </Browser>
+  </Window>
+</Desktop>

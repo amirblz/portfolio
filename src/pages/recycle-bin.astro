@@ -1,0 +1,57 @@
+---
+import Desktop from "../layouts/Desktop.astro";
+import Window from "../components/Window.astro";
+import MenuBar from "../components/MenuBar.astro";
+import { iconSrc } from "../data/apps";
+
+const files = [
+  { name: "angular.js", icon: "javascript", note: "EOL 2022. We had a good run, $scope." },
+  { name: "jquery-1.4.min.js", icon: "javascript", note: "$('#everything')" },
+  { name: "bower.json", icon: "text-document", note: "Replaced by npm. Then yarn. Then npm again." },
+  { name: "moment.js", icon: "javascript", note: "In maintenance mode since 2020. Still 230 kB." },
+  { name: "flash-player.swf", icon: "swf", note: "Blocked by your browser since 2021." },
+];
+---
+
+<Desktop
+  title="Recycle Bin | Amir Balazade"
+  description="Five front-end tools that didn't make it, and a line for each."
+  path="/recycle-bin"
+>
+  <Window app="recycle-bin" flush>
+    <div class="explorer">
+      <MenuBar items={["File", "Edit", "View", "Favorites", "Tools", "Help"]} />
+      <div class="ex-main">
+        <aside class="ex-tasks">
+          <section class="ex-panel">
+            <h3>Recycle Bin Tasks</h3>
+            <button type="button" data-bin="empty"><img src={iconSrc("recycle-bin-empty")} alt="" width="16" height="16" />Empty the Recycle Bin</button>
+          </section>
+          <section class="ex-panel">
+            <h3>Other Places</h3>
+            <a href="/" data-open="welcome"><img src={iconSrc("desktop")} alt="" width="16" height="16" />Desktop</a>
+            <a href="/cv" data-open="cv"><img src={iconSrc("my-documents")} alt="" width="16" height="16" />My Documents</a>
+            <a href="/about" data-open="about"><img src={iconSrc("my-computer")} alt="" width="16" height="16" />My Computer</a>
+          </section>
+        </aside>
+        <ul class="ex-files" aria-label="Deleted files">
+          {
+            files.map((f) => (
+              <li class="ex-file">
+                <img src={iconSrc(f.icon)} srcset={`${iconSrc(f.icon)} 1x, ${iconSrc(f.icon, 96)} 3x`} alt="" width="32" height="32" />
+                <span>
+                  <b>{f.name}</b>
+                  <small>{f.note}</small>
+                </span>
+              </li>
+            ))
+          }
+          <li class="ex-empty" hidden>This folder is empty.</li>
+        </ul>
+      </div>
+      <div class="status-bar">
+        <p class="status-bar-field ex-count" aria-live="polite">{files.length} objects</p>
+      </div>
+    </div>
+  </Window>
+</Desktop>

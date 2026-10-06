@@ -1,5 +1,8 @@
 ---
-import Base from "../layouts/Base.astro";
+import Desktop from "../layouts/Desktop.astro";
+import Window from "../components/Window.astro";
+import MenuBar from "../components/MenuBar.astro";
+import { iconSrc } from "../data/apps";
 import cv from "../data/cv.json";
 
 /** Escaped text, with the `**figure**` markers the CV source uses reaching the page as bold. */
@@ -11,83 +14,98 @@ const rich = (value: string) =>
     .replace(/[*][*](.+?)[*][*]/g, "<strong>$1</strong>");
 ---
 
-<Base
+<Desktop
   title="Amir Balazade | CV"
   description="Seven years of front-end engineering in fintech and web3: Angular, TypeScript, real-time trading views and payment flows."
   path="/cv"
 >
-  <h1 class="lede">{cv.name}</h1>
-  <p class="standfirst" set:html={rich(cv.summary)} />
+  <Window app="cv" flush>
+    <div class="wp">
+      <MenuBar items={["File", "Edit", "View", "Insert", "Format", "Help"]} />
+      <div class="xp-toolbar">
+        <a class="xp-tool" href="/amir-balazade-cv.pdf" download>
+          <img src={iconSrc("pdf")} alt="" width="20" height="20" />Download PDF
+        </a>
+        <button type="button" class="xp-tool wp-print" data-wp="print">
+          <img src={iconSrc("printer")} alt="" width="20" height="20" />Print
+        </button>
+      </div>
+      <div class="wp-format" aria-hidden="true">
+        <span class="wp-select wide">Times New Roman</span>
+        <span class="wp-select">10</span>
+        <span class="wp-select">Western</span>
+        <b>B</b><i>I</i><u>U</u>
+      </div>
+      <div class="wp-ruler" aria-hidden="true"></div>
+      <div class="wp-doc">
+        <article class="wp-page">
+          <h1>{cv.name}</h1>
+          <p class="wp-meta">
+            {cv.headline} · {cv.location} · <a href={`mailto:${cv.email}`}>{cv.email}</a> ·
+            <a href={`https://${cv.linkedin}`} rel="me">LinkedIn</a>
+          </p>
+          <p set:html={rich(cv.summary)} />
 
-  <p>
-    <a class="action" href="/amir-balazade-cv.pdf" download>Download as PDF</a>
-  </p>
+          <h2>Experience</h2>
+          {
+            cv.roles.map((role) => (
+              <section class="wp-entry">
+                <p class="wp-entry-head">
+                  <b>{role.company}</b>
+                  <span>{role.dates}</span>
+                </p>
+                <p class="wp-entry-sub">
+                  {role.title}, {role.context}
+                  {role.arrangement ? `. ${role.arrangement}` : ""}
+                </p>
+                <ul>
+                  {role.bullets.map((line) => <li set:html={rich(line)} />)}
+                </ul>
+              </section>
+            ))
+          }
 
-  <div class="prose">
-    <h2>Experience</h2>
-  </div>
+          <h2>Projects</h2>
+          {
+            cv.projects.map((project) => (
+              <section class="wp-entry">
+                <p class="wp-entry-head">
+                  <b>{project.name}</b>
+                  {project.dates && <span>{project.dates}</span>}
+                </p>
+                <p class="wp-entry-sub">{project.description}</p>
+                {project.bullets && (
+                  <ul>
+                    {project.bullets.map((line) => <li set:html={rich(line)} />)}
+                  </ul>
+                )}
+              </section>
+            ))
+          }
 
-  {
-    cv.roles.map((role) => (
-      <article class="cv-post">
-        <div class="cv-head">
-          <span class="cv-company">{role.company}</span>
-          <span class="cv-dates">{role.dates}</span>
-        </div>
-        <p class="cv-title">
-          {role.title}, {role.context}
-          {role.arrangement ? `. ${role.arrangement}` : ""}
-        </p>
-        <ul>
-          {role.bullets.map((line) => <li set:html={rich(line)} />)}
-        </ul>
-      </article>
-    ))
-  }
+          <h2>Skills</h2>
+          <dl class="wp-skills">
+            {
+              cv.skills.map((group) => (
+                <div>
+                  <dt>{group.label}</dt>
+                  <dd>{group.items.join(", ")}</dd>
+                </div>
+              ))
+            }
+          </dl>
 
-  <div class="prose">
-    <h2>Projects</h2>
-  </div>
+          <h2>Education</h2>
+          <p>{cv.education.degree}, {cv.education.institution}, {cv.education.dates}</p>
 
-  {
-    cv.projects.map((project) => (
-      <article class="cv-post">
-        <div class="cv-head">
-          <span class="cv-company">{project.name}</span>
-          {project.dates && <span class="cv-dates">{project.dates}</span>}
-        </div>
-        <p class="cv-title">{project.description}</p>
-        {project.bullets && (
-          <ul>
-            {project.bullets.map((line) => <li set:html={rich(line)} />)}
-          </ul>
-        )}
-      </article>
-    ))
-  }
-
-  <div class="prose">
-    <h2>Skills</h2>
-  </div>
-
-  <dl class="cv-skills">
-    {
-      cv.skills.map((group) => (
-        <div>
-          <dt>{group.label}</dt>
-          <dd>{group.items.join(", ")}</dd>
-        </div>
-      ))
-    }
-  </dl>
-
-  <div class="prose">
-    <h2>Education</h2>
-    <p>
-      {cv.education.degree}, {cv.education.institution}, {cv.education.dates}
-    </p>
-
-    <h2>Languages</h2>
-    <p>{cv.languages.join(", ")}</p>
-  </div>
-</Base>
+          <h2>Languages</h2>
+          <p>{cv.languages.join(", ")}</p>
+        </article>
+      </div>
+      <div class="status-bar" aria-hidden="true">
+        <p class="status-bar-field">For Help, press F1</p>
+        <p class="status-bar-field wp-num">NUM</p>
+      </div>
+    </div>
+  </Window>
+</Desktop>

@@ -1,56 +1,17 @@
 ---
-import Base from "../../layouts/Base.astro";
-
-const demo = "https://ossa.abalazade.workers.dev";
+import Desktop from "../../layouts/Desktop.astro";
+import Window from "../../components/Window.astro";
+import Browser from "../../components/Browser.astro";
 ---
 
-<Base
-  title="OSSA: a small-batch storefront"
-  description="A front-end demo of what a limited clothing drop needs past the homepage: stock per variant, a cart that respects it, and no fake checkout."
+<Desktop
+  title="OSSA: a small-batch storefront demo"
+  description="A front-end demo of a limited clothing drop: stock per variant, a cart capped at real stock, and no fake checkout."
   path="/work/ossa"
 >
-  <a class="back" href="/">Index</a>
-
-  <h1 class="lede">OSSA</h1>
-  <p class="standfirst">
-    A made-up clothing brand, built to show what a limited drop needs past the homepage. Nothing
-    here takes payment.
-  </p>
-
-  <p><a class="action" href={demo}>Open the demo</a></p>
-
-  <div class="prose">
-    <h2>Why it's built this way</h2>
-    <p>
-      Most store demos track stock per product. Real drops sell out per variant: the black tee in XS
-      is gone while the L is still there. Almost everything interesting on a product page follows
-      from that.
-    </p>
-    <p>
-      <strong>No framework.</strong> Six products and one cart don't need a bundler or a dependency
-      tree to keep patched. Three files load instantly.
-    </p>
-    <p>
-      <strong>No real checkout.</strong> On a hosted platform, checkout belongs to the platform and
-      is its most tested part. Replacing it is how stores lose money, so the button is a stub.
-    </p>
-    <p>
-      <strong>Clothes are SVG, not photos.</strong> No stock images to license, and picking a colour
-      recolours the garment, which is the variant-to-image link a real catalogue needs.
-    </p>
-    <p>
-      <strong>Stock is a default plus exceptions.</strong> Instead of ninety hand-written rows,
-      <code>{"{ default: 9, overrides: { 'Black / XS': 0 } }"}</code> says the same thing.
-    </p>
-
-    <h2>What it does</h2>
-    <ul>
-      <li>Six products, one of them fully sold out.</li>
-      <li>Colour and size pickers with live stock, a size guide and fabric details.</li>
-      <li>Unavailable options stay visible, crossed out.</li>
-      <li>A cart drawer capped at real stock, with free-shipping progress, that survives a reload.</li>
-      <li>Back-in-stock signup on sold-out variants, and a newsletter form.</li>
-      <li>Real product URLs that you can share, and a back button that works.</li>
-    </ul>
-  </div>
-</Base>
+  <Window app="ossa" flush>
+    <Browser url="https://ossa.abalazade.workers.dev" label="OSSA demo store, live">
+      OSSA: a clothing drop that sells out per size and colour. The cart never lets you buy more than exists.
+    </Browser>
+  </Window>
+</Desktop>

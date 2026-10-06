@@ -76,3 +76,923 @@
 .welcome-foot a {
   color: #fff;
 }
+
+/* ---------- shared app chrome ---------- */
+
+/* App roots fill the window and scroll inside their own document area. */
+.window .window-body.flush {
+  display: flex;
+  flex-direction: column;
+}
+
+.ie,
+.pv,
+.wiz,
+.sysprop,
+.oe,
+.wp,
+.explorer {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.xp-menubar {
+  display: flex;
+  flex-wrap: wrap;
+  flex: none;
+  padding: 1px 2px;
+  border-bottom: 1px solid #d8d2bd;
+  background: #ece9d8;
+  user-select: none;
+}
+
+.xp-menubar span {
+  padding: 2px 6px;
+}
+
+.xp-menubar u,
+.wiz-buttons u,
+.sp-buttons u {
+  border: 0;
+  text-decoration: underline;
+}
+
+.xp-toolbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  border-bottom: 1px solid #c6c1b2;
+  background: linear-gradient(#f9f8f3, #ece9d8);
+}
+
+.window .xp-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 0;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #000;
+  font: 11px var(--font);
+  text-decoration: none;
+  background: none;
+  box-shadow: none;
+}
+
+.window .xp-tool.tall {
+  flex-direction: column;
+  gap: 1px;
+  padding: 2px 8px;
+}
+
+.window .xp-tool:not(:disabled):hover {
+  border-color: #cecec3;
+  background: linear-gradient(#fff, #f1efe6);
+  box-shadow: none;
+}
+
+.window .xp-tool:not(:disabled):active,
+.window .xp-tool[aria-pressed="true"] {
+  border-color: #9d9d92;
+  background: #e3e2da;
+  box-shadow: inset 1px 1px 2px rgb(0 0 0 / 0.15);
+}
+
+.window .xp-tool:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+  box-shadow: none;
+}
+
+.window .xp-tool:disabled {
+  color: #aca899;
+}
+
+.window .xp-tool:disabled img {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.xp-tool-sep,
+.pv-sep {
+  align-self: stretch;
+  width: 1px;
+  margin: 2px 3px;
+  background: #c6c1b2;
+  box-shadow: 1px 0 #fff;
+}
+
+/* A link dressed as a Luna push button. */
+.xp-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 75px;
+  min-height: 23px;
+  padding: 0 12px;
+  border: 1px solid #003c74;
+  border-radius: 3px;
+  color: #000;
+  font: 11px var(--font);
+  text-decoration: none;
+  background: linear-gradient(180deg, #fff, #ecebe5 86%, #d8d0c4);
+}
+
+.xp-button:hover {
+  box-shadow: inset -1px 1px #fff0cf, inset 1px 2px #fdd889, inset -2px 2px #fbc761, inset 2px -2px #e5a01a;
+}
+
+.xp-button:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+  box-shadow: inset -1px 1px #cee7ff, inset 1px 2px #98b8ea, inset -2px 2px #bcd4f6, inset 1px -1px #89ade4,
+    inset 2px -2px #89ade4;
+}
+
+.window .status-bar {
+  flex: none;
+}
+
+.window .status-bar-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* ---------- Internet Explorer ---------- */
+
+.ie-address {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  border-bottom: 1px solid #c6c1b2;
+  color: #555;
+  background: #ece9d8;
+}
+
+.ie-url {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 20px;
+  margin: 0;
+  padding: 0 4px;
+  border: 1px solid #7f9db9;
+  color: #000;
+  background: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ie-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 4px;
+  color: #000;
+  text-decoration: none;
+}
+
+.ie-info {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-bottom: 1px solid #aca899;
+  font-size: 12px;
+  line-height: 1.35;
+  background: #ffffe1;
+}
+
+.ie-info p {
+  flex: 1;
+  margin: 0;
+}
+
+.ie-info a {
+  flex: none;
+  font-weight: 700;
+  color: #0033cc;
+}
+
+.ie-page {
+  display: block;
+  flex: 1;
+  width: 100%;
+  min-height: 240px;
+  border: 0;
+  border-top: 1px solid #7f9db9;
+  background: #fff;
+}
+
+html:not(.js) .ie-page {
+  height: 60vh;
+}
+
+.ie-zone {
+  flex: 0 0 110px;
+}
+
+/* ---------- Picture and Fax Viewer ---------- */
+
+.pv {
+  background: #fff;
+}
+
+.pv-pitch {
+  flex: none;
+  padding: 8px 12px;
+  border-bottom: 1px solid #d6dff7;
+  font-size: 12px;
+  line-height: 1.4;
+  background: linear-gradient(#fff, #eef3fc);
+}
+
+.pv-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.pv-shot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.js .pv-shot {
+  position: absolute;
+  inset: 0;
+}
+
+.js .pv-shot:not(.current) {
+  display: none;
+}
+
+.pv-shot img {
+  max-width: 100%;
+  max-height: calc(100% - 24px);
+  width: auto;
+  height: auto;
+  box-shadow: 1px 1px 4px rgb(0 0 0 / 0.35);
+}
+
+html:not(.js) .pv-shot img {
+  max-height: none;
+}
+
+.pv-shot figcaption {
+  color: #555;
+}
+
+.pv.actual .pv-shot {
+  display: block;
+  overflow: auto;
+}
+
+.pv.actual .pv-shot:not(.current) {
+  display: none;
+}
+
+.pv.actual .pv-shot img {
+  max-width: none;
+  max-height: none;
+}
+
+.pv-stage:fullscreen {
+  background: #000;
+}
+
+.pv-stage:fullscreen figcaption {
+  color: #ccc;
+}
+
+.pv-toolbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 3px 6px;
+  border-top: 1px solid #c3cfe8;
+  background: linear-gradient(#f7f9fe, #dfe7f7);
+}
+
+.pv-count {
+  margin-left: 8px;
+  color: #333;
+}
+
+html:not(.js) .pv-toolbar {
+  display: none;
+}
+
+/* ---------- setup wizards ---------- */
+
+.wiz {
+  background: #ece9d8;
+}
+
+.wiz-pages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: auto;
+}
+
+.wiz-page {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.js .wiz-page {
+  display: none;
+}
+
+.js .wiz-page.current,
+.js .wiz-pages:not(:has(> .current)) > .wiz-page:first-child {
+  display: flex;
+}
+
+.wiz-page p {
+  margin: 0 0 10px;
+}
+
+.wiz-page.banner {
+  flex-direction: row;
+  background: #fff;
+}
+
+.wiz-page.banner::before {
+  content: "";
+  flex: 0 0 164px;
+  background: var(--wiz-icon) center 28px / 72px no-repeat, linear-gradient(170deg, #6e97e9, #2650c0 60%, #163a9e);
+}
+
+.wiz-banner-body {
+  flex: 1;
+  padding: 18px 20px;
+}
+
+.wiz-banner-body h3 {
+  margin: 0 0 16px;
+  font: 700 16px/1.25 Verdana, var(--font);
+}
+
+.wiz-head {
+  flex: none;
+  padding: 10px 64px 10px 16px;
+  border-bottom: 1px solid #aca899;
+  box-shadow: 0 1px #fff;
+  background: #fff var(--wiz-icon) right 12px center / 40px no-repeat;
+}
+
+.wiz-head h3 {
+  margin: 0;
+  font: 700 11px var(--font);
+}
+
+.wiz-head p {
+  margin: 4px 0 0 16px;
+  font-size: 11px;
+}
+
+.wiz-body {
+  flex: 1;
+  padding: 16px 24px 16px 32px;
+}
+
+.wiz-req {
+  margin-top: 12px;
+}
+
+.wiz-req ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.wiz-buttons {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 10px 12px;
+  border-top: 1px solid #aca899;
+  box-shadow: inset 0 1px #fff;
+}
+
+.wiz-buttons [data-wiz="cancel"] {
+  margin-left: 6px;
+}
+
+.js .wiz:not(:has(.wiz-page:last-child.current)) .wiz-finish,
+.js .wiz:has(.wiz-page:last-child.current) [data-wiz="next"],
+html:not(.js) .wiz-buttons button {
+  display: none;
+}
+
+.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 6px;
+  border: 1px solid #aca899;
+  background: #fff;
+}
+
+.d-box rect {
+  fill: #eef3fc;
+  stroke: #7f9db9;
+}
+
+.d-frame rect {
+  fill: none;
+  stroke: #7f9db9;
+  stroke-dasharray: 3 3;
+}
+
+.d-line path {
+  fill: none;
+  stroke: #6d6d6d;
+}
+
+.d-tunnel path {
+  fill: none;
+  stroke: #2c5ccf;
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+}
+
+.d-label text {
+  fill: #444;
+  font: 13px var(--font);
+}
+
+.d-label .d-strong {
+  fill: #000;
+  font-weight: 700;
+}
+
+/* ---------- System Properties ---------- */
+
+.sysprop {
+  padding: 6px 8px 8px;
+  background: #ece9d8;
+}
+
+.sysprop [role="tabpanel"] {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  margin-bottom: 8px;
+}
+
+.js .sysprop [role="tabpanel"]:not(.current) {
+  display: none;
+}
+
+.sp-general {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.sp-general dl {
+  margin: 0;
+}
+
+.sp-general dt:not(:first-child) {
+  margin-top: 14px;
+}
+
+.sp-general dd {
+  margin: 4px 0 0 22px;
+}
+
+.sp-note {
+  margin: 20px 0 0;
+  color: #555;
+}
+
+.sp-rows {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  margin: 0;
+}
+
+.sp-rows dd {
+  margin: 0;
+}
+
+.sp-dm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+
+.sp-buttons {
+  display: flex;
+  flex: none;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* ---------- Outlook Express ---------- */
+
+.oe {
+  margin: 0;
+  background: #ece9d8;
+}
+
+.oe-fields {
+  display: grid;
+  flex: none;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 4px 6px;
+  padding: 6px 8px;
+}
+
+.oe-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.oe-field {
+  margin: 0;
+}
+
+p.oe-field {
+  padding: 2px 4px;
+  border: 1px solid #7f9db9;
+  background: #fff;
+}
+
+.oe-body {
+  flex: 1;
+  min-height: 120px;
+  margin: 0 8px 6px;
+  padding: 6px;
+  border: 1px solid #7f9db9;
+  font: 12px Arial, sans-serif;
+  resize: none;
+}
+
+.oe input:focus,
+.oe textarea:focus {
+  border-color: var(--select);
+  box-shadow: 0 0 0 1px var(--select);
+}
+
+/* ---------- WordPad ---------- */
+
+.wp {
+  background: #ece9d8;
+}
+
+.wp-format {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-bottom: 1px solid #c6c1b2;
+}
+
+.wp-select {
+  min-width: 28px;
+  padding: 1px 4px;
+  border: 1px solid #7f9db9;
+  background: #fff;
+}
+
+.wp-select.wide {
+  min-width: 120px;
+}
+
+.wp-format b,
+.wp-format i,
+.wp-format u {
+  width: 18px;
+  border: 0;
+  text-align: center;
+  font-family: "Times New Roman", serif;
+  font-size: 13px;
+}
+
+.wp-ruler {
+  flex: none;
+  height: 16px;
+  border-bottom: 1px solid #808080;
+  background: repeating-linear-gradient(90deg, transparent 0 11px, #808080 11px 12px) 0 100% / 100% 4px no-repeat, #fff;
+}
+
+.wp-doc {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 24px 32px;
+  background: #fff;
+}
+
+.wp-page {
+  max-width: 72ch;
+  font: 14px/1.45 "Times New Roman", Times, serif;
+}
+
+.wp-page h1 {
+  margin: 0;
+  font: 700 24px "Times New Roman", Times, serif;
+}
+
+.wp-page h2 {
+  margin: 20px 0 6px;
+  border-bottom: 1px solid #000;
+  font: 700 16px "Times New Roman", Times, serif;
+}
+
+.wp-page p {
+  margin: 0 0 8px;
+}
+
+.wp-meta {
+  font-style: italic;
+}
+
+.wp-page .wp-entry-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 12px;
+  margin: 12px 0 0;
+}
+
+.wp-entry-sub {
+  font-style: italic;
+}
+
+.wp-entry ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.wp-skills {
+  margin: 0;
+}
+
+.wp-skills div {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.wp-skills dt {
+  font-weight: 700;
+}
+
+.wp-skills dd {
+  margin: 0;
+}
+
+.wp-num {
+  flex: 0 0 48px;
+}
+
+html:not(.js) .wp-print {
+  display: none;
+}
+
+/* ---------- Recycle Bin ---------- */
+
+.explorer {
+  background: #fff;
+}
+
+.ex-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.ex-tasks {
+  flex: 0 0 180px;
+  padding: 10px;
+  overflow: auto;
+  background: linear-gradient(#7ba2e7, #6375d6);
+}
+
+.ex-panel {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-radius: 3px 3px 0 0;
+  background: #d6dff7;
+}
+
+.ex-panel h3 {
+  margin: 0 0 4px;
+  padding: 5px 10px;
+  border-radius: 3px 3px 0 0;
+  color: #215dc6;
+  font: 700 11px var(--font);
+  background: linear-gradient(90deg, #fff, #c6d3f7);
+}
+
+.window .ex-panel a,
+.window .ex-panel button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 0;
+  padding: 3px 10px;
+  border: 0;
+  border-radius: 0;
+  color: #215dc6;
+  font: 11px var(--font);
+  text-align: left;
+  text-decoration: none;
+  background: none;
+  box-shadow: none;
+}
+
+.window .ex-panel a:hover,
+.window .ex-panel button:not(:disabled):hover {
+  color: #428eff;
+  text-decoration: underline;
+  box-shadow: none;
+}
+
+.window .ex-panel button:disabled {
+  color: #8a9bc8;
+}
+
+.ex-files {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  align-content: start;
+  gap: 12px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  list-style: none;
+}
+
+.ex-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ex-file b {
+  display: block;
+  font-weight: 400;
+}
+
+.ex-file small {
+  display: block;
+  color: #6d6d6d;
+  font-size: 11px;
+}
+
+.ex-empty {
+  color: #6d6d6d;
+}
+
+/* ---------- phone ---------- */
+
+@media (max-width: 640px) {
+  .wiz-page.banner::before {
+    flex-basis: 64px;
+    background-position: center 20px;
+    background-size: 40px;
+  }
+
+  .sp-general {
+    grid-template-columns: 1fr;
+  }
+
+  .wp-doc {
+    padding: 16px;
+  }
+
+  .wp-skills div {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .ex-main {
+    flex-direction: column;
+  }
+
+  .ex-tasks {
+    flex: none;
+    padding: 6px;
+  }
+
+  .ex-panel {
+    margin: 0;
+  }
+
+  .ex-panel + .ex-panel {
+    display: none;
+  }
+
+  .ie-info {
+    flex-wrap: wrap;
+  }
+}
+
+/* ---------- print: the CV, without the desktop around it ---------- */
+
+@media print {
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+    background: #fff;
+  }
+
+  body.xp > :not(main),
+  .desktop-icons,
+  .windows > .window:not([data-window="cv"]),
+  .window[data-window="cv"] .title-bar,
+  .window[data-window="cv"] .rz,
+  .wp > :not(.wp-doc) {
+    display: none !important;
+  }
+
+  .desktop,
+  .windows {
+    position: static;
+    background: none;
+    filter: none;
+  }
+
+  .windows > .window[data-window="cv"],
+  .window[data-window="cv"] .window-body,
+  .wp,
+  .wp-doc {
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overflow: visible;
+    box-shadow: none;
+    background: none;
+  }
+
+  .wp-page {
+    max-width: none;
+  }
+
+  .wp-page a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* XP.css draws the +/- box; drop the browser's own disclosure triangle. */
+.sysprop .tree-view summary { list-style: none; }
+.sysprop .tree-view summary::-webkit-details-marker { display: none; }

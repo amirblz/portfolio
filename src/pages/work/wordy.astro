@@ -1,0 +1,43 @@
+---
+import Desktop from "../../layouts/Desktop.astro";
+import Window from "../../components/Window.astro";
+import Wizard from "../../components/Wizard.astro";
+import WizardPage from "../../components/WizardPage.astro";
+---
+
+<Desktop
+  title="wordy.cards: German vocabulary, offline"
+  description="A German vocabulary PWA: FSRS-5 spaced repetition over 3,500+ words, graded by flip time, fully offline on IndexedDB."
+  path="/work/wordy"
+>
+  <Window app="wordy" flush>
+    <Wizard icon="setup" finish={{ href: "/work/wordy/live", open: "wordy-live" }}>
+      <WizardPage title="Welcome to the wordy.cards Setup Wizard" banner>
+        <p>German words, learned on a walk through Japan.</p>
+        <p>wordy.cards is a vocabulary app I designed and built: an Angular PWA with a NestJS and MongoDB API.</p>
+        <p>To continue, click Next.</p>
+      </WizardPage>
+      <WizardPage title="Design" subtitle="One card, one word, one flip.">
+        <p>Each lesson is a stop on the walk. A card shows the German word; flip it for the meaning.</p>
+      </WizardPage>
+      <WizardPage title="Engine" subtitle="FSRS-5 spaced repetition over 3,500+ words.">
+        <p>No grading buttons. The time you take to flip a card is the grade, and FSRS-5 schedules the next review from it.</p>
+      </WizardPage>
+      <WizardPage title="Offline" subtitle="Works with no connection at all.">
+        <p>Everything lives in IndexedDB. Progress syncs in the background, and only changed lessons download.</p>
+      </WizardPage>
+      <WizardPage title="Completing the wordy.cards Setup Wizard" banner>
+        <p>wordy.cards is live. Click Finish to open it.</p>
+        <fieldset class="wiz-req">
+          <legend>System Requirements</legend>
+          <ul>
+            <li>Angular PWA, service worker</li>
+            <li>NestJS and MongoDB API</li>
+            <li>FSRS-5 scheduler</li>
+            <li>IndexedDB, background sync</li>
+          </ul>
+        </fieldset>
+      </WizardPage>
+    </Wizard>
+  </Window>
+</Desktop>

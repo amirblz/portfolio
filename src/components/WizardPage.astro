@@ -1,0 +1,31 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  /** Welcome and completion pages: blue banner on the left, big title. */
+  banner?: boolean;
+}
+
+const { title, subtitle, banner } = Astro.props;
+---
+
+<section class:list={["wiz-page", { banner }]} aria-label={title}>
+  {
+    banner ? (
+      <div class="wiz-banner-body">
+        <h3>{title}</h3>
+        <slot />
+      </div>
+    ) : (
+      <>
+        <header class="wiz-head">
+          <h3>{title}</h3>
+          {subtitle && <p>{subtitle}</p>}
+        </header>
+        <div class="wiz-body">
+          <slot />
+        </div>
+      </>
+    )
+  }
+</section>

@@ -1,0 +1,12 @@
+---
+/** An XP menu bar. Decorative: the menus don't open, so screen readers skip it. */
+interface Props {
+  items: string[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="xp-menubar" aria-hidden="true">
+  {items.map((item) => <span><u>{item[0]}</u>{item.slice(1)}</span>)}
+</div>

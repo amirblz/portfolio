@@ -14,10 +14,16 @@ repository secrets: `CLOUDFLARE_API_TOKEN` (scoped to Workers Scripts Write on t
 
 ## Where the content comes from
 
-`src/data/cv-base.json` holds the facts — names, dates, contact — stated once. `src/data/cv-core.json`
-holds the writing for the general audience. `/cv` renders from both, and `public/amir-balazade-cv.pdf`
-is the same CV as a download. Change a date in `cv-base.json` and both the page and the next PDF
-render agree.
+`src/data/cv.json` holds the CV. `/cv` renders it as a WordPad window, `/about` reads location,
+education and skills from it, and `public/amir-balazade-cv.pdf` is the same CV as a download.
+
+## How windows work
+
+`src/data/apps.ts` lists every app: title, icon, route and window size. Each route renders the
+desktop with its own window open, so every page has its content with JavaScript off. On the client,
+opening an app fetches its route and lifts the `[data-window]` element out of it. Fetched markup
+arrives without its scoped styles or scripts, so window CSS lives in `src/styles/apps.css` and app
+behaviour in the delegated handlers of `src/scripts/apps.ts`.
 
 ## Demos
 

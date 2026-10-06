@@ -1,84 +1,17 @@
 ---
-import Base from "../../layouts/Base.astro";
+import Desktop from "../../layouts/Desktop.astro";
+import Window from "../../components/Window.astro";
+import Browser from "../../components/Browser.astro";
 ---
 
-<Base
-  title="Remorch wallet: a ticket that was three defects"
-  description="A swap that took the signature and did nothing turned out to be three separate bugs, one of which hid failures across the whole app."
+<Desktop
+  title="Remorch: wallet, admin panel and payment page"
+  description="Remorch's wallet PWA across 7 blockchains, its admin panel and its payment page: three Angular apps I built as front-end engineer."
   path="/work/remorch-app"
 >
-  <a class="back" href="/">Index</a>
-
-  <h1 class="lede">One ticket, three defects</h1>
-  <p class="standfirst">
-    In the wallet PWA, a swap took the user's signature and then did nothing. No message, no
-    navigation, no record. The ticket described one bug. The code had three.
-  </p>
-
-  <dl class="dossier">
-    <div>
-      <dt>Surface</dt>
-      <dd>Wallet PWA: buy, sell, transfer, swap, credit</dd>
-    </div>
-    <div>
-      <dt>Work</dt>
-      <dd>Signing flow rewrite, error categories, login error messages</dd>
-    </div>
-    <div>
-      <dt>Stack</dt>
-      <dd>Angular, RxJS, multi-chain signing</dd>
-    </div>
-  </dl>
-
-  <div class="prose">
-    <h2>Three bugs stacked up</h2>
-    <p>
-      <strong>The promise was never awaited.</strong> Four order paths started signing inside an
-      operator that throws away its return value. The stream finished on the HTTP response, so the
-      rejection had nowhere to land.
-    </p>
-    <p>
-      <strong>The global handler then swallowed it.</strong> It unwrapped the error correctly, then
-      returned early for anything shaped like an HTTP error. A failed submit has exactly that shape,
-      so every failed order in the app produced no message and no telemetry, not just swaps.
-    </p>
-    <p>
-      <strong>A swap signs twice, and the second signature was orphaned.</strong> It started fire
-      and forget inside the first one's stream, logged errors only to the console, and had no error
-      handler. That's the likeliest reason a swap took a signature and did nothing.
-    </p>
-    <p>Fixing only the path in the ticket would have left the other two live.</p>
-
-    <h2>Rules for the rewrite</h2>
-    <p>
-      In signing code, normal error habits are dangerous. Attaching the original error, logging it,
-      or showing the server's message can all put key material or a signed payload somewhere it
-      shouldn't be.
-    </p>
-    <p>
-      So no error object from a signing strategy is ever kept, rethrown, wrapped or shown. Failures
-      map to a fixed set of categories, and the category is the whole message. Cancelling is a
-      category too: no toast, still navigates. The response cache only stores GET requests, so it
-      can't hold a signed payload.
-    </p>
-
-    <h2>The review that caught my mistake</h2>
-    <p>
-      Changes on this path get a dedicated review before merge. Mine came back blocked, with seven
-      things to fix and eight to consider. The worst: the new interface still let the caller trigger
-      repeated signing without asking the user again. The containment held up. The sequencing was
-      wrong, and only a reviewer looking for exactly that would have caught it.
-    </p>
-
-    <h2>Login errors, while I was there</h2>
-    <p>
-      A failed login showed the same two generic toasts for every cause: wrong phrase, wrong
-      passcode, rejected account. The phrase step only checked that twelve words were typed. Now
-      each cause says what went wrong, once.
-    </p>
-  </div>
-
-  <p><a class="action" href="https://www.youtube.com/@Remorch">See the app on YouTube</a></p>
-
-  <p><a class="action" href="/work/zhambon">Zhambon, where the deployment is the interesting part</a></p>
-</Base>
+  <Window app="remorch-app" flush>
+    <Browser url="https://remorch.com" label="remorch.com, live">
+      Remorch: a wallet across 7 blockchains, an admin panel and an 80 kB payment page. I built all three.
+    </Browser>
+  </Window>
+</Desktop>

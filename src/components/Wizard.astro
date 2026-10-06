@@ -1,0 +1,29 @@
+---
+/** An XP setup wizard. Children are <WizardPage>s; with JS one shows at a time, without it they stack. */
+import { iconSrc } from "../data/apps";
+
+interface Props {
+  /** Icon for the banner pages and the page headers. */
+  icon: string;
+  finish: { href: string; /** App id to open in a window instead of navigating. */ open?: string };
+}
+
+const { icon, finish } = Astro.props;
+const external = /^https?:/.test(finish.href);
+---
+
+<div class="wiz" style={`--wiz-icon: url(${iconSrc(icon, 96)})`}>
+  <div class="wiz-pages"><slot /></div>
+  <div class="wiz-buttons">
+    <button type="button" data-wiz="back" disabled>&lt; <u>B</u>ack</button>
+    <button type="button" data-wiz="next"><u>N</u>ext &gt;</button>
+    <a
+      class="wiz-finish xp-button"
+      href={finish.href}
+      data-open={finish.open}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener" : undefined}>Finish</a
+    >
+    <button type="button" data-wiz="cancel">Cancel</button>
+  </div>
+</div>

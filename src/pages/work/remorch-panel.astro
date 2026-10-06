@@ -1,105 +1,36 @@
 ---
-import Base from "../../layouts/Base.astro";
+import Desktop from "../../layouts/Desktop.astro";
+import Window from "../../components/Window.astro";
+import PictureViewer from "../../components/PictureViewer.astro";
+
+const shots = [
+  {
+    src: "/work/remorch-panel/pos-grid.webp",
+    alt: "The payments grid on the POS tab, listing devices with accepted tokens and status, with creator names blurred",
+    caption: "Payments grid, POS tab. Names blurred: production data.",
+  },
+  {
+    src: "/work/remorch-panel/pos-order-detail.webp",
+    alt: "A POS payment's detail page: original amount in AED, exchange rate, network, amount in USDC and fee, with the payer name blurred",
+    caption: "One POS payment, from the original amount to the fee.",
+  },
+  {
+    src: "/work/remorch-panel/login.webp",
+    alt: "The panel's sign-in screen with email and password fields beside a Remorch brand card",
+    caption: "Sign-in.",
+  },
+];
 ---
 
-<Base
-  title="Remorch admin panel: the upgrade was the cheap part"
-  description="Moving a live admin panel three Angular majors forward and zoneless, where the real work was 53 components that repainted by luck."
+<Desktop
+  title="Remorch admin panel"
+  description="The panel Remorch's desk uses for orders, customers, partners and payouts: Angular 22, ag-grid and ECharts over live financial data."
   path="/work/remorch-panel"
 >
-  <a class="back" href="/">Index</a>
-
-  <h1 class="lede">The upgrade was the cheap part</h1>
-  <p class="standfirst">
-    The panel the desk uses for orders, customers and payouts. Three Angular majors in one pass,
-    plus zoneless and a new grid major.
-  </p>
-
-  <dl class="dossier">
-    <div>
-      <dt>Surface</dt>
-      <dd>Internal admin: orders, customers, partners, financial, support</dd>
-    </div>
-    <div>
-      <dt>Work</dt>
-      <dd>Angular 19 to 22, zoneless, ag-grid 33 to 36, standalone, test tooling</dd>
-    </div>
-    <div>
-      <dt>Stack</dt>
-      <dd>Angular 22, ag-grid 36, ECharts, vitest</dd>
-    </div>
-  </dl>
-
-  <section class="shots">
-    <figure class="shot">
-      <img
-        src="/work/remorch-panel/pos-grid.webp"
-        alt="The payments grid on the POS tab, listing devices with accepted tokens and status, with creator names blurred"
-        width="1920"
-        height="1080"
-        loading="lazy"
-      />
-      <figcaption>The payments grid, POS tab. Names are blurred because this is production data.</figcaption>
-    </figure>
-  </section>
-
-  <div class="prose">
-    <h2>What actually cost time</h2>
-    <p>
-      Version bumps are mostly mechanical, so the plan started by ranking the risks. Zoneless came first:
-      53 components changed how they detect changes at once, about 16 of them only repainted by
-      luck, and the code had no explicit change-detector calls to fall back on.
-    </p>
-    <p>
-      Second was the grid's own major, which folds nine or more scroll containers into one and
-      renames layout classes that four of our style overrides depended on. The TypeScript major
-      turned out to be a non-event. Two dependencies weren't imported anywhere, and deleting them
-      saved dragging an error-reporting library through its own upgrade.
-    </p>
-
-    <h2>Same library, opposite call</h2>
-    <p>
-      The <a href="/work/remorch-pay">payment page</a> dropped its component library. This panel
-      kept it on the free tier. The payment page is public and used six components, so removal took
-      an afternoon. The panel is internal and built from that library on every screen, so keeping it
-      made more sense.
-    </p>
-
-    <h2>Checking it, and one objection</h2>
-    <p>
-      About twenty routes were compared before and after, with accessibility checks in the same
-      run, against a read-only proxy so the data had real shapes. The test runner was replaced in
-      the same pass.
-    </p>
-    <p>
-      The decision was to deliver it as one squashed commit. I argued against that and lost, so I wrote the
-      tradeoff into the plan: a grid regression, a repaint bug and a compile error would all land in
-      one diff, with no CI to tell them apart.
-    </p>
-  </div>
-
-  <section class="shots">
-    <figure class="shot">
-      <img
-        src="/work/remorch-panel/pos-order-detail.webp"
-        alt="A POS payment's detail page: original amount in AED, exchange rate, network, amount in USDC and fee, with the payer name blurred"
-        width="1920"
-        height="1080"
-        loading="lazy"
-      />
-      <figcaption>One POS payment, from the original amount to the fee.</figcaption>
-    </figure>
-    <figure class="shot">
-      <img
-        src="/work/remorch-panel/login.webp"
-        alt="The panel's sign-in screen with email and password fields beside a Remorch brand card"
-        width="1920"
-        height="1080"
-        loading="lazy"
-      />
-      <figcaption>The sign-in screen.</figcaption>
-    </figure>
-  </section>
-
-  <p><a class="action" href="/work/remorch-app">The wallet, and a signature that went missing</a></p>
-</Base>
+  <Window app="remorch-panel" flush>
+    <PictureViewer shots={shots}>
+      <b>Remorch admin.</b> The desk runs orders, customers, partners and payouts from it, on Angular 22, ag-grid
+      and ECharts.
+    </PictureViewer>
+  </Window>
+</Desktop>

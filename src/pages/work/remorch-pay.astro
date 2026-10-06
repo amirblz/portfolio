@@ -1,109 +1,30 @@
 ---
-import Base from "../../layouts/Base.astro";
+import Desktop from "../../layouts/Desktop.astro";
+import Window from "../../components/Window.astro";
+import PictureViewer from "../../components/PictureViewer.astro";
+
+const shots = [
+  {
+    src: "/work/remorch-pay/payment-link.webp",
+    alt: "A payment link: a dark card showing 24.50 USDC on Polygon, beside pay and connect wallet buttons",
+    caption: "A payment link, ready to pay. Mock data.",
+  },
+  {
+    src: "/work/remorch-pay/payment-success.webp",
+    alt: "The payment success screen with a receipt listing receiver, amount, network, rate and transaction hash",
+    caption: "The receipt after a successful payment.",
+  },
+];
 ---
 
-<Base
-  title="Remorch payment gateway: deleting a dependency instead of licensing it"
-  description="Moving a public crypto payment page to Angular 22 and zoneless meant removing a component library instead of paying to keep it."
+<Desktop
+  title="Remorch payment page"
+  description="The public page Remorch customers pay through: crypto payments on Polygon and BSC, built in Angular 22 with an 80 kB initial download."
   path="/work/remorch-pay"
 >
-  <a class="back" href="/">Index</a>
-
-  <h1 class="lede">The payment page, rebuilt</h1>
-  <p class="standfirst">
-    The page customers pay through. Moving it from Angular 20 to 22 without zone.js meant dealing
-    with a component library first.
-  </p>
-
-  <dl class="dossier">
-    <div>
-      <dt>Surface</dt>
-      <dd>Public checkout, five routes, crypto payments on Polygon and BSC</dd>
-    </div>
-    <div>
-      <dt>Work</dt>
-      <dd>Angular upgrade, zoneless, dependency removal, matching the design</dd>
-    </div>
-    <div>
-      <dt>Stack</dt>
-      <dd>Angular 22, signals, native dialog, SCSS</dd>
-    </div>
-  </dl>
-
-  <section class="shots">
-    <figure class="shot">
-      <img
-        src="/work/remorch-pay/payment-link.webp"
-        alt="A payment link: a dark card showing 24.50 USDC on Polygon, beside pay and connect wallet buttons"
-        width="1920"
-        height="1080"
-        loading="lazy"
-      />
-      <figcaption>A payment link, ready to pay. All data here is mock.</figcaption>
-    </figure>
-  </section>
-
-  <div class="prose">
-    <h2>What blocked the upgrade</h2>
-    <p>
-      This repo was on Angular 20.3 while its sibling was on 22, so shared guidance had to be
-      written twice. Dropping zone.js also removes a polyfill from every bundle, along with a whole
-      class of "why didn't this repaint" bugs.
-    </p>
-    <p>
-      The component library stood in the way. It expected Angular 17 or 18 and an older zone.js,
-      so it couldn't move to 21 or 22, and it depended on the exact package being removed.
-    </p>
-
-    <h2>Remove it instead of licensing it</h2>
-    <p>
-      The library's current major adds a license check. Without a key it draws a banner on every
-      page that the app can't style or hide. The free key is per repo, seat capped and expires.
-      That has no place over a form where people confirm a transfer.
-    </p>
-    <p>
-      The app used six of its components, and 550 of the 670 lines in its theme file styled
-      components it never rendered. Removing them took an afternoon. The currency sheet became a
-      native <code>&lt;dialog&gt;</code>, and the upgrade went ahead.
-    </p>
-
-    <h2>Proof that nothing broke</h2>
-    <p>
-      Every route was captured before and after. Four of six screens came out byte for byte
-      identical. The other two changed on purpose: the currency sheet and the amount card. A later
-      pass matched every screen to the design file and checked the layout from 390 to 1440 wide,
-      with axe running in the same sweep.
-    </p>
-  </div>
-
-  <section class="shots">
-    <figure class="shot">
-      <img
-        src="/work/remorch-pay/payment-success.webp"
-        alt="The payment success screen with a receipt listing receiver, amount, network, rate and transaction hash"
-        width="1920"
-        height="1080"
-        loading="lazy"
-      />
-      <figcaption>The receipt after a successful payment.</figcaption>
-    </figure>
-  </section>
-
-  <div class="prose">
-    <h2>The mock layer</h2>
-    <p>
-      No real customer appears in these screenshots. Captures run on fixtures: a made-up merchant, a
-      domain that can't resolve, a phone number from the reserved range. Eleven scenarios cover
-      paths that are hard to hit on demand, like an expired link, a wrong chain or a reverted
-      transaction.
-    </p>
-    <p>
-      The mocks are swapped in at build time, not behind a runtime flag. A marker string shows up in
-      the mock bundle and not in production, and the production bundle grew by 76 bytes.
-    </p>
-  </div>
-
-  <p>
-    <a class="action" href="/work/remorch-panel">The admin panel, same company, opposite decision</a>
-  </p>
-</Base>
+  <Window app="remorch-pay" flush>
+    <PictureViewer shots={shots}>
+      <b>Remorch Pay.</b> The page customers pay through, in USDC on Polygon and BSC. Its first download is 80 kB.
+    </PictureViewer>
+  </Window>
+</Desktop>

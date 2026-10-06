@@ -38,7 +38,7 @@ const store = {
 let soundOn = store.get(localStorage, "xp-sound") !== "off";
 const soundButton = $<HTMLButtonElement>("#tray-sound");
 
-function play(name: string) {
+export function play(name: string) {
   if (!soundOn) return Promise.resolve();
   const audio = new Audio(`/xp/sounds/${name}.mp3`);
   audio.volume = 0.5;

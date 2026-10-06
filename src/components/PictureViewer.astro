@@ -1,0 +1,34 @@
+---
+/** Windows Picture and Fax Viewer. The slot is the pitch above the pictures. */
+import { iconSrc } from "../data/apps";
+
+interface Props {
+  shots: { src: string; alt: string; caption: string }[];
+}
+
+const { shots } = Astro.props;
+---
+
+<div class="pv">
+  <div class="pv-pitch"><slot /></div>
+  <div class="pv-stage">
+    {
+      shots.map((shot, i) => (
+        <figure class:list={["pv-shot", { current: i === 0 }]}>
+          <img src={shot.src} alt={shot.alt} width="1920" height="1080" loading={i === 0 ? "eager" : "lazy"} />
+          <figcaption>{shot.caption}</figcaption>
+        </figure>
+      ))
+    }
+  </div>
+  <div class="pv-toolbar" role="toolbar" aria-label="Picture">
+    <button type="button" class="xp-tool" data-pv="prev" aria-label="Previous picture"><img src={iconSrc("back")} alt="" width="22" height="22" /></button>
+    <button type="button" class="xp-tool" data-pv="next" aria-label="Next picture"><img src={iconSrc("forward")} alt="" width="22" height="22" /></button>
+    <span class="pv-sep"></span>
+    <button type="button" class="xp-tool" data-pv="fit" aria-label="Best fit" aria-pressed="true"><img src={iconSrc("ie-shrink-image")} alt="" width="22" height="22" /></button>
+    <button type="button" class="xp-tool" data-pv="actual" aria-label="Actual size" aria-pressed="false"><img src={iconSrc("ie-enlarge-image")} alt="" width="22" height="22" /></button>
+    <span class="pv-sep"></span>
+    <button type="button" class="xp-tool" data-pv="slideshow" aria-label="Start slide show"><img src={iconSrc("slideshow")} alt="" width="22" height="22" /></button>
+    <span class="pv-count" aria-live="polite">1 of {shots.length}</span>
+  </div>
+</div>

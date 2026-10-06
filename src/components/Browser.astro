@@ -1,0 +1,38 @@
+---
+/** Internet Explorer with a live site in the page area. The slot is the yellow Information Bar line. */
+import MenuBar from "./MenuBar.astro";
+import { iconSrc } from "../data/apps";
+
+interface Props {
+  url: string;
+  /** Accessible name for the frame. */
+  label: string;
+}
+
+const { url, label } = Astro.props;
+---
+
+<div class="ie">
+  <MenuBar items={["File", "Edit", "View", "Favorites", "Tools", "Help"]} />
+  <div class="xp-toolbar">
+    <button type="button" class="xp-tool" disabled><img src={iconSrc("back")} alt="" width="24" height="24" />Back</button>
+    <button type="button" class="xp-tool" disabled aria-label="Forward"><img src={iconSrc("forward")} alt="" width="24" height="24" /></button>
+    <button type="button" class="xp-tool" data-ie="refresh" aria-label="Refresh"><img src={iconSrc("ie-refresh")} alt="" width="20" height="20" /></button>
+    <button type="button" class="xp-tool" data-ie="home" aria-label="Home"><img src={iconSrc("ie-home")} alt="" width="20" height="20" /></button>
+  </div>
+  <div class="ie-address">
+    <span aria-hidden="true">Address</span>
+    <p class="ie-url"><img src={iconSrc("ie")} alt="" width="16" height="16" /><span>{url}</span></p>
+    <a class="ie-go" href={url} target="_blank" rel="noopener"><img src={iconSrc("go")} alt="" width="18" height="18" />Go</a>
+  </div>
+  <div class="ie-info" role="note">
+    <img src={iconSrc("information")} alt="" width="16" height="16" />
+    <p><slot /></p>
+    <a href={url} target="_blank" rel="noopener">Open in new window</a>
+  </div>
+  <iframe class="ie-page" src={url} data-home={url} title={label}></iframe>
+  <div class="status-bar" aria-hidden="true">
+    <p class="status-bar-field"><img src={iconSrc("ie")} alt="" width="14" height="14" />Done</p>
+    <p class="status-bar-field ie-zone"><img src={iconSrc("internet-shortcut")} alt="" width="14" height="14" />Internet</p>
+  </div>
+</div>

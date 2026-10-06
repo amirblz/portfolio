@@ -1,0 +1,78 @@
+---
+import Desktop from "../layouts/Desktop.astro";
+import Window from "../components/Window.astro";
+import cv from "../data/cv.json";
+---
+
+<Desktop
+  title="System Properties | Amir Balazade"
+  description="Amir Balazade, front-end engineer in Istanbul: seven years of Angular and TypeScript, mostly fintech and web3. Available for remote work."
+  path="/about"
+>
+  <Window app="about" flush>
+    <div class="sysprop">
+      <menu role="tablist" aria-label="System Properties">
+        <button type="button" role="tab" id="sp-tab-general" aria-controls="sp-general" aria-selected="true">General</button>
+        <button type="button" role="tab" id="sp-tab-name" aria-controls="sp-name" aria-selected="false" tabindex="-1">Computer Name</button>
+        <button type="button" role="tab" id="sp-tab-hardware" aria-controls="sp-hardware" aria-selected="false" tabindex="-1">Hardware</button>
+      </menu>
+
+      <article role="tabpanel" id="sp-general" aria-labelledby="sp-tab-general" class="current">
+        <div class="sp-general">
+          <img class="sp-logo" src="/xp/ui/windows-flag.png" alt="" width="76" height="61" />
+          <dl>
+            <dt>System:</dt>
+            <dd>Amir Balazade</dd>
+            <dd>Front-End Engineer</dd>
+            <dd>Version 7+ (since 2017)</dd>
+            <dt>Registered to:</dt>
+            <dd>whoever is reading this</dd>
+            <dd class="sp-id">55274-AN6-TS22-RXJS</dd>
+            <dt>Computer:</dt>
+            <dd>Angular 22, TypeScript</dd>
+            <dd>RxJS, signals, ag-grid</dd>
+            <dd>{cv.languages.join(", ")}</dd>
+          </dl>
+        </div>
+        <p class="sp-note">Not affiliated with Microsoft.</p>
+      </article>
+
+      <article role="tabpanel" id="sp-name" aria-labelledby="sp-tab-name">
+        <dl class="sp-rows">
+          <dt>Full computer name:</dt>
+          <dd>amirbalazade.ir</dd>
+          <dt>Location:</dt>
+          <dd>{cv.location}</dd>
+          <dt>Workgroup:</dt>
+          <dd>{cv.availability}</dd>
+          <dt>Education:</dt>
+          <dd>{cv.education.degree}, {cv.education.dates}</dd>
+        </dl>
+      </article>
+
+      <article role="tabpanel" id="sp-hardware" aria-labelledby="sp-tab-hardware">
+        <p class="sp-dm"><img src="/xp/icons/32/my-computer.png" alt="" width="16" height="16" />Device Manager</p>
+        <ul class="tree-view">
+          {
+            cv.skills.map((group) => (
+              <li>
+                <details>
+                  <summary>{group.label}</summary>
+                  <ul>
+                    {group.items.map((item) => <li>{item}</li>)}
+                  </ul>
+                </details>
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+
+      <div class="sp-buttons">
+        <button type="button" data-close>OK</button>
+        <button type="button" data-close>Cancel</button>
+        <button type="button" disabled><u>A</u>pply</button>
+      </div>
+    </div>
+  </Window>
+</Desktop>
