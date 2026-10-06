@@ -2,7 +2,7 @@
 import "../styles/vendor/xp.css";
 import "../styles/desktop.css";
 import "../styles/apps.css";
-import { apps, appById, desktopIcon, iconSrc } from "../data/apps";
+import { apps, appById, desktopIcon, iconSrc, linkOf } from "../data/apps";
 
 interface Props {
   title: string;
@@ -94,7 +94,7 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
           desktop.map((a) => {
             const img = icon(desktopIcon[a.id] ?? a.icon);
             return (
-              <a class="desktop-icon" href={a.href ?? `#${a.id}`} data-open={a.id}>
+              <a class="desktop-icon" href={linkOf(a)} data-open={a.id}>
                 <img src={img.src} srcset={img.srcset} alt="" width="32" height="32" />
                 <span>{a.desktop}</span>
               </a>
@@ -158,7 +158,7 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
           {
             places.map((p) => (
               <li role="none">
-                <a role="menuitem" class="start-item" href={appById[p.app].href ?? `#${p.app}`} data-open={p.app}>
+                <a role="menuitem" class="start-item" href={linkOf(appById[p.app])} data-open={p.app}>
                   <img {...icon(p.icon)} loading="lazy" alt="" width="24" height="24" />
                   <span>{p.label}</span>
                 </a>

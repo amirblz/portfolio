@@ -78,6 +78,7 @@ function wizard(root: HTMLElement, action: string) {
   // Keep focus on the button row: Next turns into Finish on the last page, Back dies on the first.
   const target = n === pages.length - 1 ? root.querySelector<HTMLElement>(".wiz-finish") : back.disabled ? root.querySelector<HTMLElement>('[data-wiz="next"]') : null;
   target?.focus();
+  root.querySelector("[data-wiz-status]")!.textContent = `Step ${n + 1} of ${pages.length}: ${pages[n].getAttribute("aria-label")}`;
 }
 
 /* ---------- System Properties tabs ---------- */
@@ -119,10 +120,18 @@ document.addEventListener("submit", (e) => {
 
 /* ---------- Recycle Bin ---------- */
 
-function emptyBin(root: HTMLElement) {
+// A reopened window is cloned from the fetched page, full again, so the emptying is replayed.
+let binEmptied = false;
+document.addEventListener("xp:open", (e) => {
+  const el = (e as CustomEvent<HTMLElement>).detail;
+  if (binEmptied && el.dataset.window === "recycle-bin") emptyBin(el.querySelector(".explorer")!, false);
+});
+
+function emptyBin(root: HTMLElement, sound = true) {
   const files = root.querySelectorAll<HTMLElement>(".ex-file");
   if (!files.length) return;
-  play("recycle");
+  binEmptied = true;
+  if (sound) play("recycle");
   files.forEach((f) => f.remove());
   root.querySelector<HTMLElement>(".ex-empty")!.hidden = false;
   root.querySelector(".ex-count")!.textContent = "0 objects";

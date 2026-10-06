@@ -36,6 +36,12 @@ export const apps: App[] = [
 
 export const appById = Object.fromEntries(apps.map((a) => [a.id, a]));
 
+/** The home page's title: the desktop goes back to it when no window is active. */
+export const homeTitle = "Amir Balazade, front-end engineer";
+
+/** Where a link to the app goes without JS. A folder has no route, so it opens its first item. */
+export const linkOf = (a: App) => a.href ?? (a.items && appById[a.items[0]]?.href) ?? `#${a.id}`;
+
 /** Desktop icon for an app: My Computer shows its own icon, not the window's. */
 export const desktopIcon: Record<string, string> = { about: "my-computer" };
 

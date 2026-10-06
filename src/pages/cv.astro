@@ -42,7 +42,7 @@ const rich = (value: string) =>
           <h1>{cv.name}</h1>
           <p class="wp-meta">
             {cv.headline} · {cv.location} · <a href={`mailto:${cv.email}`}>{cv.email}</a> ·
-            <a href={`https://${cv.linkedin}`} rel="me">LinkedIn</a>
+            <a href={`https://${cv.linkedin}`} rel="me">{cv.linkedin}</a>
           </p>
           <p set:html={rich(cv.summary)} />
 

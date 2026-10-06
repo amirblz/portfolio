@@ -2,7 +2,7 @@
 // Windows come from their routes: opening one fetches its page and lifts the [data-window]
 // element, so every window also exists as a plain server-rendered URL.
 
-import { apps, appById, iconSrc, type App } from "../data/apps";
+import { apps, appById, homeTitle, iconSrc, type App } from "../data/apps";
 
 const $ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) =>
   root.querySelector(sel) as T;
@@ -16,33 +16,43 @@ const startMenu = $("#start-menu");
 const startAll = $<HTMLButtonElement>("#start-all");
 const programs = $("#start-programs");
 const phone = matchMedia("(max-width: 640px)");
-const baseTitle = document.title;
 
+// Storage is a thunk: with site data blocked, merely reading `localStorage` throws.
 const store = {
-  get: (s: Storage, k: string) => {
+  get: (s: () => Storage, k: string) => {
     try {
-      return s.getItem(k);
+      return s().getItem(k);
     } catch {
       return null;
     }
   },
-  set: (s: Storage, k: string, v: string) => {
+  set: (s: () => Storage, k: string, v: string) => {
     try {
-      s.setItem(k, v);
+      s().setItem(k, v);
     } catch {}
   },
 };
 
 /* ---------- sound ---------- */
 
-let soundOn = store.get(localStorage, "xp-sound") !== "off";
+let soundOn = store.get(() => localStorage, "xp-sound") !== "off";
 const soundButton = $<HTMLButtonElement>("#tray-sound");
 
-export function play(name: string) {
+/** `untilEnd` resolves when the sound finishes (capped), not when it starts. */
+export function play(name: string, untilEnd = false): Promise<void> {
   if (!soundOn) return Promise.resolve();
   const audio = new Audio(`/xp/sounds/${name}.mp3`);
   audio.volume = 0.5;
-  return audio.play().catch(() => {});
+  return audio.play().then(
+    () =>
+      untilEnd
+        ? new Promise<void>((done) => {
+            audio.addEventListener("ended", () => done(), { once: true });
+            setTimeout(done, 4000);
+          })
+        : undefined,
+    () => {},
+  );
 }
 
 function renderSound() {
@@ -53,7 +63,7 @@ function renderSound() {
 
 soundButton.addEventListener("click", () => {
   soundOn = !soundOn;
-  store.set(localStorage, "xp-sound", soundOn ? "on" : "off");
+  store.set(() => localStorage, "xp-sound", soundOn ? "on" : "off");
   renderSound();
   play("ding");
 });
@@ -61,8 +71,8 @@ renderSound();
 
 // Browsers only allow sound after a gesture, so the startup chime waits for the first one.
 function chimeOnce() {
-  if (store.get(sessionStorage, "xp-chimed")) return;
-  store.set(sessionStorage, "xp-chimed", "1");
+  if (store.get(() => sessionStorage, "xp-chimed")) return;
+  store.set(() => sessionStorage, "xp-chimed", "1");
   play("startup");
 }
 addEventListener("pointerdown", chimeOnce, { once: true, capture: true });
@@ -73,7 +83,7 @@ addEventListener("keydown", chimeOnce, { once: true, capture: true });
 function endBoot() {
   if (!html.classList.contains("booting")) return;
   html.classList.remove("booting");
-  store.set(sessionStorage, "xp-booted", "1");
+  store.set(() => sessionStorage, "xp-booted", "1");
   afterBoot();
 }
 
@@ -90,8 +100,8 @@ if (html.classList.contains("booting")) {
 }
 
 function afterBoot() {
-  if (store.get(sessionStorage, "xp-balloon")) return;
-  store.set(sessionStorage, "xp-balloon", "1");
+  if (store.get(() => sessionStorage, "xp-balloon")) return;
+  store.set(() => sessionStorage, "xp-balloon", "1");
   setTimeout(showBalloon, 1500);
 }
 
@@ -212,14 +222,18 @@ function close(win: Win) {
   const next = topWindow();
   if (next) focus(next, false);
   else syncLocation();
-  const back = win.invoker?.isConnected ? win.invoker : next?.el ?? $(".desktop-icon");
+  // A Start menu invoker is still connected but hidden, and can't take focus.
+  const { invoker } = win;
+  const back = invoker?.isConnected && invoker.offsetParent !== null ? invoker : next?.el ?? (invoker ? startButton : $(".desktop-icon"));
   back?.focus({ preventScroll: true });
 }
 
 /** The address bar follows the active window, so any state can be shared as a link. */
+/** Folders have no route, so they leave the address and title as they are. */
 function syncLocation(push = false) {
-  const href = (active && appById[active.id]?.href) || "/";
-  document.title = active?.el.dataset.doctitle ?? baseTitle;
+  if (active && !appById[active.id]?.href) return;
+  const href = active ? appById[active.id].href! : "/";
+  document.title = active?.el.dataset.doctitle ?? homeTitle;
   if (location.pathname === href) return;
   history[push ? "pushState" : "replaceState"](null, "", href);
 }
@@ -270,9 +284,10 @@ async function open(id: string, invoker?: HTMLElement | null, push = true) {
   el.addEventListener("animationend", () => el!.classList.remove("opening"), { once: true });
   layer.append(el);
   const win = register(el, invoker);
+  // Push before focus(): its own sync replaces, and would leave nothing for this push to add.
   active = win;
-  focus(win);
   if (push) syncLocation(true);
+  focus(win);
 }
 
 function buildFolder(app: App) {
@@ -365,6 +380,8 @@ layer.addEventListener("pointerdown", (e) => {
 
   e.preventDefault();
   const { el } = win;
+  // preventDefault stops the click from moving focus, so the raised window takes it here.
+  if (!el.contains(document.activeElement)) el.focus({ preventScroll: true });
   const area = layer.getBoundingClientRect();
   const start = { x: e.clientX, y: e.clientY, left: el.offsetLeft, top: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight };
   target.setPointerCapture(e.pointerId);
@@ -401,6 +418,16 @@ layer.addEventListener("pointerdown", (e) => {
   target.addEventListener("pointermove", move);
   target.addEventListener("pointerup", up);
   target.addEventListener("pointercancel", up);
+});
+
+// Same bounds as a drag, so a title bar never ends up out of reach.
+addEventListener("resize", () => {
+  const area = layer.getBoundingClientRect();
+  for (const { el } of wins.values()) {
+    if (el.classList.contains("maximized")) continue;
+    el.style.left = `${Math.min(Math.max(el.offsetLeft, 60 - el.offsetWidth), area.width - 60)}px`;
+    el.style.top = `${Math.min(Math.max(el.offsetTop, 0), area.height - 24)}px`;
+  }
 });
 
 /* ---------- opening things ---------- */
@@ -474,7 +501,7 @@ function setPrograms(show: boolean) {
 startButton.addEventListener("click", () => (startMenu.hidden ? openStart() : closeStart()));
 // A mouse has already opened the list by hovering, so its click keeps it open; touch and keys toggle.
 startAll.addEventListener("click", (e) => {
-  setPrograms((e as PointerEvent).pointerType === "mouse" || programs.hidden);
+  setPrograms((e as PointerEvent).pointerType === "mouse" || Boolean(programs.hidden));
   if (!programs.hidden) $<HTMLElement>("[role=menuitem]", programs).focus();
 });
 startAll.addEventListener("pointerenter", (e) => {
@@ -573,8 +600,8 @@ document.addEventListener("click", (e) => {
     powerDialog.hidden = false;
     $<HTMLElement>('[data-power="shutdown"]', powerDialog).focus();
   } else if (action === "cancel") hidePower();
-  else if (action === "restart") play("shutdown").then(reboot);
-  else if (action === "logoff") play("logoff").then(reboot);
+  else if (action === "restart") play("shutdown", true).then(reboot);
+  else if (action === "logoff") play("logoff", true).then(reboot);
   else if (action === "shutdown") {
     powerDialog.hidden = true;
     play("shutdown");
@@ -603,6 +630,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key !== "Escape") return;
   if (!powerDialog.hidden) return hidePower();
   if (!startMenu.hidden) return closeStart(true);
+  if (e.defaultPrevented || (e.target as Element).closest?.("input, textarea, select, [contenteditable]")) return;
   const focused = winOf(document.activeElement);
   if (focused) return close(focused);
   if (!balloon.hidden) return hideBalloon();

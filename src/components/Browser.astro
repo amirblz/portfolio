@@ -30,7 +30,13 @@ const { url, label } = Astro.props;
     <p><slot /></p>
     <a href={url} target="_blank" rel="noopener">Open in new window</a>
   </div>
-  <iframe class="ie-page" src={url} data-home={url} title={label}></iframe>
+  <iframe
+    class="ie-page"
+    src={url}
+    data-home={url}
+    title={label}
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+    referrerpolicy="strict-origin-when-cross-origin"></iframe>
   <div class="status-bar" aria-hidden="true">
     <p class="status-bar-field"><img src={iconSrc("ie")} alt="" width="14" height="14" />Done</p>
     <p class="status-bar-field ie-zone"><img src={iconSrc("internet-shortcut")} alt="" width="14" height="14" />Internet</p>

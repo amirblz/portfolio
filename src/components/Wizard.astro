@@ -14,6 +14,7 @@ const external = /^https?:/.test(finish.href);
 
 <div class="wiz" style={`--wiz-icon: url(${iconSrc(icon, 96)})`}>
   <div class="wiz-pages"><slot /></div>
+  <p class="sr-only" aria-live="polite" data-wiz-status></p>
   <div class="wiz-buttons">
     <button type="button" data-wiz="back" disabled>&lt; <u>B</u>ack</button>
     <button type="button" data-wiz="next"><u>N</u>ext &gt;</button>

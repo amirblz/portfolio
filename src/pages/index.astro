@@ -1,13 +1,13 @@
 ---
 import Desktop from "../layouts/Desktop.astro";
 import Window from "../components/Window.astro";
-import { appById, iconSrc } from "../data/apps";
+import { appById, homeTitle, iconSrc, linkOf } from "../data/apps";
 
 const projects = ["remorch-app", "remorch-panel", "remorch-pay", "wordy", "zhambon", "demos"].map((id) => appById[id]);
 ---
 
 <Desktop
-  title="Amir Balazade, front-end engineer"
+  title={homeTitle}
   description="Front-end engineer, seven years in Angular and TypeScript, most of it in fintech and web3."
   path="/"
 >
@@ -24,7 +24,7 @@ const projects = ["remorch-app", "remorch-panel", "remorch-pay", "wordy", "zhamb
         {
           projects.map((a) => (
             <li>
-              <a class="welcome-app" href={a.href ?? `#${a.id}`} data-open={a.id}>
+              <a class="welcome-app" href={linkOf(a)} data-open={a.id}>
                 <img src={iconSrc(a.icon, 96)} alt="" width="48" height="48" />
                 <span>{a.desktop}</span>
               </a>
