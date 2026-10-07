@@ -98,7 +98,8 @@
 .pv,
 .wiz,
 .sysprop,
-.oe,
+.ym-buddies,
+.ym-chat,
 .wp,
 .explorer {
   display: flex;
@@ -660,55 +661,6 @@ html:not(.js) .wiz-buttons button {
   gap: 6px;
 }
 
-/* ---------- Outlook Express ---------- */
-
-.oe {
-  margin: 0;
-  background: #ece9d8;
-}
-
-.oe-fields {
-  display: grid;
-  flex: none;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 4px 6px;
-  padding: 6px 8px;
-}
-
-.oe-label {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
-}
-
-.oe-field {
-  margin: 0;
-}
-
-p.oe-field {
-  padding: 2px 4px;
-  border: 1px solid #7f9db9;
-  background: #fff;
-}
-
-.oe-body {
-  flex: 1;
-  min-height: 120px;
-  margin: 0 8px 6px;
-  padding: 6px;
-  border: 1px solid #7f9db9;
-  font: 12px Arial, sans-serif;
-  resize: none;
-}
-
-.oe input:focus,
-.oe textarea:focus {
-  border-color: var(--select);
-  box-shadow: 0 0 0 1px var(--select);
-}
-
 /* ---------- WordPad ---------- */
 
 .wp {
@@ -969,6 +921,619 @@ html:not(.js) .wp-print {
   .ie-info {
     flex-wrap: wrap;
   }
+}
+
+/* ---------- Yahoo! Messenger: buddy list ---------- */
+
+.ym-buddies,
+.ym-chat {
+  --ym-lavender: #e4e7f6;
+  --ym-edge: #9ba4d2;
+  --ym-blue: #2b55c8;
+}
+
+.ym-buddies {
+  background: linear-gradient(#f3f4fb, var(--ym-lavender) 120px);
+}
+
+.ym-buddies .xp-menubar,
+.ym-chat .xp-menubar {
+  border-bottom-color: var(--ym-edge);
+  background: #f3f4fb;
+}
+
+.ym-me {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 8px 8px 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ym-me-status {
+  color: #555;
+}
+
+.ym-list {
+  flex: 1;
+  min-height: 0;
+  margin: 0 6px;
+  padding: 3px 0;
+  overflow: auto;
+  border: 1px solid var(--ym-edge);
+  background: #fff;
+}
+
+.ym-group summary {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 6px;
+  color: var(--ym-blue);
+  font-weight: bold;
+  list-style: none;
+  cursor: default;
+  user-select: none;
+}
+
+.ym-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.ym-group summary::before {
+  content: "";
+  border: 4px solid transparent;
+  border-left: 5px solid currentColor;
+  border-right: 0;
+}
+
+.ym-group[open] summary::before {
+  border: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  border-bottom: 0;
+}
+
+.ym-group ul {
+  margin: 0 0 4px;
+  padding: 0;
+  list-style: none;
+}
+
+.ym-buddy {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 6px 3px 22px;
+  color: #000;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.ym-buddy:hover {
+  background: #eef1fc;
+}
+
+.ym-buddy.selected {
+  background: #c9d4f6;
+}
+
+.ym-buddy:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -1px;
+}
+
+.ym-buddy-name {
+  font-weight: bold;
+}
+
+.ym-buddy-note {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ym-ad {
+  flex: none;
+  margin: 6px;
+  border: 1px solid var(--ym-edge);
+  background: linear-gradient(135deg, #5b2a9a, #3b4fc4);
+}
+
+.ym-ad a {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 60px;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.ym-ad a[hidden] {
+  display: none;
+}
+
+.ym-ad strong {
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.ym-ad em {
+  margin-top: auto;
+  color: #ffd84a;
+  font-style: normal;
+  font-weight: bold;
+}
+
+.ym-ad a:hover em {
+  text-decoration: underline;
+}
+
+.ym-ad a:focus-visible {
+  outline: 1px dotted #fff;
+  outline-offset: -3px;
+}
+
+/* ---------- Yahoo! Messenger: instant message window ---------- */
+
+.ym-chat {
+  position: relative;
+  background: linear-gradient(#f3f4fb, var(--ym-lavender) 140px);
+}
+
+.ym-ico {
+  display: block;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  background: url("/ym/toolbar.png") calc(var(--x) * -26px) 0 no-repeat;
+}
+
+/* Buddies borrows the app icon, so it has no grey state to swap. */
+img.ym-ico {
+  background: none;
+}
+
+a.ym-tool {
+  text-decoration: none;
+}
+
+.window .ym-tool:not(:disabled):hover .ym-ico,
+.ym-tool:active .ym-ico {
+  background-position-y: -26px;
+}
+
+.ym-format .ym-ico {
+  height: 18px;
+  background-position-y: -52px;
+}
+
+.window .ym-fmt:hover .ym-ico,
+.ym-fmt:active .ym-ico,
+.ym-fmt[aria-expanded="true"] .ym-ico {
+  background-position-y: -70px;
+}
+
+.ym-tools,
+.ym-format {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 1px;
+}
+
+.ym-tools {
+  padding: 2px 4px;
+  /* Narrow windows swipe the joke buttons; focus scrolls them in for keyboards. */
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--ym-edge);
+}
+
+/* Tall toolbar buttons and flat format buttons share the XP hover box. */
+.window .ym-tool,
+.window .ym-fmt {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #333;
+  font: 11px var(--font);
+  white-space: nowrap;
+  background: none;
+  box-shadow: none;
+}
+
+.window .ym-tool {
+  flex: none;
+  flex-direction: column;
+  gap: 1px;
+  padding: 2px 5px 1px;
+}
+
+.window .ym-fmt {
+  gap: 3px;
+  height: 24px;
+  padding: 0 3px;
+}
+
+.window .ym-tool:hover,
+.window .ym-fmt:hover {
+  border-color: var(--ym-edge);
+  background: linear-gradient(#fff, #e9ecfa);
+  box-shadow: none;
+}
+
+.window .ym-tool:active,
+.window .ym-fmt:active,
+.window .ym-fmt[aria-expanded="true"] {
+  border-color: #7d87bd;
+  background: #d9def4;
+  box-shadow: inset 1px 1px 2px rgb(0 0 0 / 0.15);
+}
+
+.window .ym-tool:focus-visible,
+.window .ym-fmt:focus-visible,
+.window .ym-send:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.window .ym-tool[data-ym="email"] {
+  color: #000;
+  font-weight: bold;
+}
+
+.ym-fmt-buzz {
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.ym-to {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 5px 8px 4px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ym-to-note {
+  overflow: hidden;
+  color: #555;
+  text-overflow: ellipsis;
+}
+
+.ym-convo {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  min-height: 0;
+  margin: 0 6px;
+}
+
+.ym-log {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 6px;
+  overflow: auto;
+  border: 1px solid var(--ym-edge);
+  background: #fff;
+  font: 13px Arial, Helvetica, sans-serif;
+  list-style: none;
+  overflow-wrap: anywhere;
+}
+
+.ym-log li {
+  padding: 1px 0;
+}
+
+.ym-who {
+  color: var(--ym-blue);
+  font-weight: bold;
+}
+
+.ym-log .me .ym-who {
+  color: #6a6a6a;
+}
+
+.ym-log img {
+  vertical-align: middle;
+}
+
+/* The day a returning visitor's old log stops. */
+.ym-log .ym-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+  color: #777;
+  font-size: 11px;
+}
+
+.ym-log .ym-date::before,
+.ym-log .ym-date::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid #d5d8ea;
+}
+
+.ym-log .ym-note {
+  color: #777;
+  font-style: italic;
+}
+
+/* Without JS nothing answers or sends: the log points at e-mail and the inputs go. */
+html.js .ym-nojs,
+html:not(.js) .ym-format,
+html:not(.js) .ym-compose {
+  display: none;
+}
+
+/* BUZZ!!! in the log is red and bold, like YM's own. */
+.ym-log .ym-buzz {
+  color: #e00;
+  font-weight: bold;
+}
+
+.window.ym-buzzing {
+  animation: ym-shake 0.6s linear;
+}
+
+@keyframes ym-shake {
+  10%, 50%, 90% { transform: translate(-6px, 2px); }
+  20%, 60% { transform: translate(6px, -2px); }
+  30%, 70% { transform: translate(-4px, -3px); }
+  40%, 80% { transform: translate(4px, 3px); }
+}
+
+/* Two flashes a second: under the 3-per-second seizure threshold. */
+@keyframes ym-flash {
+  25%, 75% { box-shadow: 0 0 0 4px #ff8c00, 0 0 18px 6px rgb(255 140 0 / 0.6); }
+  50% { box-shadow: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .window.ym-buzzing {
+    animation: ym-flash 1s steps(1);
+  }
+}
+
+.ym-pic {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin: 0;
+  font-size: 11px;
+}
+
+.ym-pic img {
+  display: block;
+  width: 96px;
+  height: 96px;
+  padding: 2px;
+  border: 1px solid var(--ym-edge);
+  background: #fff;
+  object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .ym-pic img {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+.ym-format {
+  position: relative;
+  margin: 3px 6px 0;
+}
+
+.ym-smileys {
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 1px;
+  width: 300px;
+  max-width: calc(100vw - 40px);
+  max-height: 180px;
+  padding: 3px;
+  overflow: auto;
+  border: 1px solid #7d87bd;
+  background: #fff;
+  box-shadow: 2px 2px 3px rgb(0 0 0 / 0.25);
+}
+
+.ym-smileys[hidden] {
+  display: none;
+}
+
+.window .ym-smileys button {
+  display: grid;
+  place-items: center;
+  min-width: 24px;
+  min-height: 0;
+  height: 24px;
+  padding: 0 2px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.window .ym-smileys button:hover,
+.window .ym-smileys button:focus-visible {
+  border-color: var(--ym-blue);
+  background: #eef1fc;
+  outline: 0;
+}
+
+.ym-as {
+  flex: none;
+  margin: 2px 8px 2px;
+  color: #555;
+  font-size: 11px;
+}
+
+.ym-compose {
+  display: flex;
+  flex: none;
+  gap: 6px;
+  height: 58px;
+  margin: 0 6px 6px;
+}
+
+.window .ym-input {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+  border: 1px solid var(--ym-edge);
+  font: 13px Arial, Helvetica, sans-serif;
+  resize: none;
+}
+
+.window .ym-send {
+  width: 72px;
+  min-width: 0;
+  height: auto;
+  font-weight: bold;
+}
+
+/* An XP info balloon pointing up at the toolbar button that was pressed. */
+.ym-tip {
+  position: absolute;
+  z-index: 3;
+  width: max-content;
+  max-width: 220px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid #000;
+  border-radius: 6px;
+  background: #ffffe1;
+  box-shadow: 2px 2px 3px rgb(0 0 0 / 0.3);
+  line-height: 1.35;
+}
+
+.ym-tip::before,
+.ym-tip::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: var(--tail, 16px);
+  border: 8px solid transparent;
+  border-bottom-color: #000;
+  border-left-width: 0;
+}
+
+.ym-tip::after {
+  margin: 0 0 -1px 1px;
+  border-width: 6px;
+  border-bottom-color: #ffffe1;
+  border-left-width: 0;
+}
+
+.ym-typing {
+  flex: 1;
+  min-width: 0;
+}
+
+.ym-log li {
+  white-space: pre-wrap;
+}
+
+.ym-menu {
+  position: relative;
+}
+
+.window .ym-menu-button,
+.window .ym-menu-list button {
+  min-width: 0;
+  min-height: 0;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font: inherit;
+}
+
+.window .ym-menu-button:hover,
+.window .ym-menu-button[aria-expanded="true"],
+.window .ym-menu-list button:hover,
+.window .ym-menu-list button:focus-visible {
+  color: #fff;
+  background: #316ac5;
+  outline: 0;
+}
+
+.ym-menu-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 4;
+  min-width: 150px;
+  padding: 2px;
+  border: 1px solid #aca899;
+  background: #fff;
+  box-shadow: 2px 2px 3px rgb(0 0 0 / 0.25);
+}
+
+.ym-menu-list[hidden] {
+  display: none;
+}
+
+.window .ym-menu-list button {
+  display: block;
+  width: 100%;
+  padding: 3px 18px;
+  text-align: left;
+}
+
+/* Delete Archive's confirm: an XP message box over the IM window, which it locks. */
+.ym-confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  background: rgb(255 255 255 / 0.4);
+}
+
+.ym-confirm[hidden] {
+  display: none;
+}
+
+.ym-confirm .ym-confirm-box {
+  width: 260px;
+  max-width: calc(100% - 16px);
+  margin: 0;
+}
+
+.ym-confirm p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 4px 12px;
+}
+
+.ym-confirm-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
 }
 
 /* ---------- print: the CV, without the desktop around it ---------- */

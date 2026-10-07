@@ -43,7 +43,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   `frame-src ${[...frames].sort().join(' ')}`,
-  "form-action 'self' mailto:",
+  "form-action 'self'",
   "object-src 'none'",
   "base-uri 'none'",
   "frame-ancestors 'none'",

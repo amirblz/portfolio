@@ -18,7 +18,7 @@ const programs = $("#start-programs");
 const phone = matchMedia("(max-width: 640px)");
 
 // Storage is a thunk: with site data blocked, merely reading `localStorage` throws.
-const store = {
+export const store = {
   get: (s: () => Storage, k: string) => {
     try {
       return s().getItem(k);
@@ -29,7 +29,10 @@ const store = {
   set: (s: () => Storage, k: string, v: string) => {
     try {
       s().setItem(k, v);
-    } catch {}
+      return true;
+    } catch {
+      return false;
+    }
   },
 };
 
@@ -217,6 +220,7 @@ function toggleMax(win: Win) {
 
 function close(win: Win) {
   win.el.remove();
+  document.dispatchEvent(new CustomEvent("xp:close", { detail: win.el }));
   win.task.remove();
   wins.delete(win.id);
   if (active === win) active = null;
@@ -441,7 +445,7 @@ addEventListener("resize", () => {
 // before it reports "touch", so clicks ask this instead. A keyboard click has detail 0.
 let lastPointer = "";
 addEventListener("pointerdown", (e) => (lastPointer = e.pointerType), { capture: true, passive: true });
-const byMouse = (e: MouseEvent) => e.detail > 0 && lastPointer === "mouse";
+export const byMouse = (e: MouseEvent) => e.detail > 0 && lastPointer === "mouse";
 
 // Desktop and folder icons: a mouse selects on click and opens on double-click, like XP.
 // Touch, keyboard and every other [data-open] link open on a single activation.
@@ -459,7 +463,9 @@ document.addEventListener("click", (e) => {
   if (isIcon && mouse && e.detail > 2) return;
   closeStart();
   selectIcon(null);
-  open(link.dataset.open!, link);
+  const id = link.dataset.open!;
+  // Launchers only: a link inside a window (the chat's Buddies button) opens what it names.
+  open((phone.matches && !link.closest("[data-window]") && appById[id]?.phone) || id, link);
 });
 
 function selectIcon(icon: HTMLElement | null) {

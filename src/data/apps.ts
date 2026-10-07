@@ -15,6 +15,8 @@ export interface App {
   hidden?: boolean;
   width?: number;
   height?: number;
+  /** App that the desktop icon and Start menu open instead on phones. */
+  phone?: string;
 }
 
 export const apps: App[] = [
@@ -29,7 +31,8 @@ export const apps: App[] = [
   { id: "ossa", title: "OSSA - Internet Explorer", icon: "ie", href: "/work/ossa", width: 960, height: 640 },
   { id: "cairn", title: "CAIRN - Internet Explorer", icon: "ie", href: "/work/cairn", width: 960, height: 640 },
   { id: "cv", title: "Resume.doc - WordPad", icon: "wordpad", href: "/cv", desktop: "Resume.doc", width: 760, height: 620 },
-  { id: "contact", title: "Outlook Express", icon: "outlook-express", href: "/contact", desktop: "Outlook Express", width: 560, height: 420 },
+  { id: "contact", title: "Yahoo! Messenger", icon: "ym", href: "/contact", desktop: "Yahoo! Messenger", phone: "chat", width: 260, height: 500 },
+  { id: "chat", title: "amir_balazade - Instant Message", icon: "ym-im", href: "/contact/chat", hidden: true, width: 480, height: 420 },
   { id: "about", title: "System Properties", icon: "system-properties", href: "/about", desktop: "My Computer", width: 420, height: 460 },
   { id: "recycle-bin", title: "Recycle Bin", icon: "recycle-bin-full", href: "/recycle-bin", desktop: "Recycle Bin", width: 520, height: 340 },
 ];

@@ -1,0 +1,73 @@
+{
+  "me": "amir_balazade",
+  "email": "abalazade@gmail.com",
+  "groups": [
+    {
+      "name": "Friends",
+      "buddies": [
+        {
+          "name": "amir_balazade",
+          "status": "idle",
+          "note": "building cairn ☕",
+          "href": "/contact/chat"
+        }
+      ]
+    },
+    {
+      "name": "Elsewhere",
+      "buddies": [
+        {
+          "name": "LinkedIn",
+          "status": "online",
+          "note": "mostly recruiters",
+          "href": "https://linkedin.com/in/amirbalazade"
+        },
+        {
+          "name": "E-mail",
+          "status": "online",
+          "note": "the slow way",
+          "href": "mailto:abalazade@gmail.com"
+        }
+      ]
+    }
+  ],
+  "ads": [
+    {
+      "app": "cairn",
+      "title": "CAIRN",
+      "text": "a flask store you scroll in 3D"
+    },
+    {
+      "app": "ossa",
+      "title": "OSSA",
+      "text": "a limited drop, stock that runs out"
+    }
+  ],
+  "tools": [
+    {
+      "label": "Webcam",
+      "joke": "Webcam's off. It's 320×240 of mostly ceiling anyway."
+    },
+    {
+      "label": "Call",
+      "joke": "My headset is in a drawer with a 56k modem. Type instead."
+    },
+    {
+      "label": "Send File",
+      "joke": "File transfer stalls at 99% since 2006. E-mail it instead."
+    },
+    {
+      "label": "Photos",
+      "joke": "Photo sharing is still on \"Connecting...\"."
+    },
+    {
+      "label": "Games",
+      "joke": "Yahoo! Pool closed in 2016. I was losing anyway."
+    },
+    {
+      "label": "Plug-ins",
+      "joke": "No plug-ins here. This Messenger runs on HTML and CSS."
+    }
+  ],
+  "audibles": "Audibles are muted. The dancing banana wouldn't stop."
+}

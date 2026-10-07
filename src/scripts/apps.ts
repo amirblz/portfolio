@@ -102,22 +102,6 @@ document.addEventListener("keydown", (e) => {
   selectTab(tabs[(i + tabs.length) % tabs.length]);
 });
 
-/* ---------- Outlook Express ---------- */
-
-// A plain GET form would encode spaces as "+", which mail apps show literally.
-document.addEventListener("submit", (e) => {
-  const form = e.target as HTMLFormElement;
-  if (!form.matches("[data-mailto]")) return;
-  e.preventDefault();
-  const data = new FormData(form);
-  const query = (["subject", "body"] as const)
-    .map((k) => [k, String(data.get(k) ?? "").trim()])
-    .filter(([, v]) => v)
-    .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
-    .join("&");
-  location.href = `mailto:${form.dataset.mailto}${query ? `?${query}` : ""}`;
-});
-
 /* ---------- Recycle Bin ---------- */
 
 // A reopened window is cloned from the fetched page, full again, so the emptying is replayed.

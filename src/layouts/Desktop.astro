@@ -23,7 +23,7 @@ const icon = (name: string) => ({
 const desktop = apps.filter((a) => a.desktop);
 const pinned = [
   { app: appById["remorch-app"], label: "Remorch", sub: "Internet Explorer" },
-  { app: appById.contact, label: "E-mail", sub: "Outlook Express" },
+  { app: appById.contact, label: "Yahoo! Messenger", sub: "Chat with Amir" },
 ];
 const recent = ["wordy", "zhambon", "remorch-panel", "remorch-pay"].map((id) => appById[id]);
 const places = [
@@ -215,6 +215,7 @@ const short = (a: (typeof apps)[number]) => a.desktop ?? a.title.split(" - ")[0]
     <script>
       import "../scripts/desktop";
       import "../scripts/apps";
+      import "../scripts/ym";
     </script>
   </body>
 </html>
