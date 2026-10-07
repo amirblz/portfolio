@@ -44,10 +44,25 @@ async function limited(env: Env, keys: string[]) {
 /** The JSON body, "size" when it is too big, or null when it is not JSON. */
 async function readJson(request: Request): Promise<unknown | "size" | null> {
   if (Number(request.headers.get("Content-Length") ?? 0) > MAX_BODY) return "size";
-  const raw = await request.text();
-  if (raw.length > MAX_BODY) return "size";
+  // Counted as it streams: a chunked body has no Content-Length to trust.
+  const decoder = new TextDecoder();
+  let raw = "";
+  let bytes = 0;
+  if (request.body) {
+    const reader = request.body.getReader();
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.length;
+      if (bytes > MAX_BODY) {
+        void reader.cancel();
+        return "size";
+      }
+      raw += decoder.decode(value, { stream: true });
+    }
+  }
   try {
-    return JSON.parse(raw);
+    return JSON.parse(raw + decoder.decode());
   } catch {
     return null;
   }
@@ -122,7 +137,7 @@ async function send(request: Request, env: Env) {
       replyTo: message.replyTo,
       subject: subject(message),
       text: body(message, { country, now: new Date(), mx }),
-      headers: { References: threadId(message.visitor), "In-Reply-To": threadId(message.visitor) },
+      headers: { References: threadId(message), "In-Reply-To": threadId(message) },
     });
   } catch (e) {
     console.error("send", (e as { code?: string }).code ?? "unknown");

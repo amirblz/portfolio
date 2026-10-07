@@ -5,7 +5,19 @@
 import { byMouse, play, store } from "./desktop";
 import { deliver, pass, type Failure, type Outcome, type Outgoing } from "./ym-mail";
 import { blank, bounced, respond, type Profile, type Question } from "../lib/ym-brain";
-import { MAX_LINES, MAX_TEXT, MAX_WAIT_MS, sendAt } from "../lib/ym-parse";
+import {
+  bodySafe,
+  headerSafe,
+  isAddress,
+  MAX_LINES,
+  MAX_NAME,
+  MAX_PAGE,
+  MAX_TEXT,
+  MAX_WAIT_MS,
+  newThread,
+  sendAt,
+  THREAD,
+} from "../lib/ym-parse";
 import ym from "../data/ym.json";
 import emoticons from "../data/ym-emoticons.json";
 
@@ -52,6 +64,8 @@ interface Line {
 }
 interface Archive {
   me: string;
+  /** Random and private to this archive: the mails' thread key, since ids repeat. */
+  thread: string;
   log: Line[];
   profile?: Profile;
 }
@@ -91,10 +105,13 @@ function load(): Archive {
           typeof l.at === "number" &&
           (l.mail === undefined || MAIL.has(l.mail)),
       );
-      return (memory = { me: a.me, log, profile: isProfile(a.profile) ? a.profile : undefined });
+      const found = typeof a.thread === "string" && THREAD.test(a.thread);
+      memory = { me: a.me, thread: found ? a.thread : newThread(), log, profile: isProfile(a.profile) ? a.profile : undefined };
+      if (!found) save(memory);
+      return memory;
     }
   } catch {}
-  return (memory ??= { me: visitorId(), log: [] });
+  return (memory ??= { me: visitorId(), thread: newThread(), log: [] });
 }
 
 function save(a: Archive) {
@@ -280,15 +297,22 @@ function visitOf(log: Line[]) {
 /** The visitor's line goes into the log, Amir answers, and the line waits to go out by e-mail. */
 function send(chat: HTMLElement) {
   const input = chat.querySelector<HTMLTextAreaElement>(".ym-input")!;
-  const text = input.value.trim();
+  const text = bodySafe(input.value);
   if (!text) return;
   input.value = "";
   const a = load();
   const mailed = visitOf(a.log).filter((l) => l.mail);
-  const r = respond(a.profile ?? blank(), text, { first: !mailed.length, earlier: mailed.map((l) => l.text).join("\n") });
+  const before = a.profile ?? blank();
+  const r = respond(before, text, { first: !mailed.length, earlier: mailed.map((l) => l.text).join("\n") });
+  // An answer that adds a reply address or name after the mail went out rides a mail of its own,
+  // unless lines are waiting: they read the profile when they go.
+  const learnt =
+    mailed.length &&
+    !queuedOf(a).length &&
+    (r.profile.reply !== before.reply || r.profile.name !== before.name || r.profile.company !== before.company);
   a.profile = r.profile;
   save(a);
-  post(chat, { who: "me", text, at: Date.now(), ...(r.mail && { mail: "queued" as const }) });
+  post(chat, { who: "me", text, at: Date.now(), ...((r.mail || learnt) && { mail: "queued" as const }) });
   for (const s of r.say) say(chat, s.text, s.ask);
   showReply(document);
   schedule();
@@ -344,52 +368,61 @@ function outgoing(a: Archive, lines: Line[]): Outgoing {
   const website = document.querySelector<HTMLInputElement>(".ym-hp")?.value;
   return {
     visitor: a.me,
+    thread: a.thread,
     lines: lines.map((l) => l.text),
     first: !a.log.some((l) => l.mail === "sent"),
-    page: location.pathname,
-    name: p.name,
-    company: p.company,
-    replyTo: p.reply,
+    page: headerSafe(location.pathname, MAX_PAGE),
+    name: (p.name && headerSafe(p.name, MAX_NAME)) || undefined,
+    company: (p.company && headerSafe(p.company, MAX_NAME)) || undefined,
+    replyTo: isAddress(p.reply) ? p.reply : undefined,
     topic: p.topic,
     website: website || undefined,
   };
 }
+
+// One tab at a time reads, claims and sends the queue; without Web Locks each tab just goes.
+const locked = <T>(run: () => Promise<T>) => (navigator.locks ? navigator.locks.request("ym-send", run) : run());
 
 async function flush() {
   clearTimeout(timer);
   if (flying || !queuedOf(load()).length) return;
   flying = true;
   try {
-    const passed = await pass();
-    const a = load();
-    const batch = batchOf(queuedOf(a));
-    if (!batch.length) return;
-    const ats = new Set(batch.map((l) => l.at));
-    let outcome: Outcome = { ok: false, reason: passed === true ? "server" : passed };
-    if (passed === true) {
-      setMail(ats, "sending");
-      outcome = await deliver(outgoing(a, batch));
-    }
-    const chat = liveChat();
-    if (outcome.ok) {
-      setMail(ats, "sent");
-      const reply = a.profile?.reply;
-      if (outcome.mx === "none" && reply) {
-        const b = load();
-        const r = bounced(b.profile ?? blank(), reply);
-        b.profile = r.profile;
-        save(b);
-        if (chat) for (const s of r.say) say(chat, s.text, s.ask);
-      }
-    } else if (!leaving) {
-      // What stopped this request would stop the rest: they all wait for a retry.
-      for (const l of queuedOf(load())) ats.add(l.at);
-      setMail(ats, "failed");
-      if (chat) say(chat, FAILED[outcome.reason]);
-    }
+    await locked(deliverQueued);
   } finally {
     flying = false;
     schedule();
+  }
+}
+
+async function deliverQueued() {
+  const passed = await pass();
+  // Read inside the lock: another tab may have sent these lines meanwhile.
+  const a = load();
+  const batch = batchOf(queuedOf(a));
+  if (!batch.length) return;
+  const ats = new Set(batch.map((l) => l.at));
+  let outcome: Outcome = { ok: false, reason: passed === true ? "server" : passed };
+  if (passed === true) {
+    setMail(ats, "sending");
+    outcome = await deliver(outgoing(a, batch));
+  }
+  const chat = liveChat();
+  if (outcome.ok) {
+    setMail(ats, "sent");
+    const reply = a.profile?.reply;
+    if (outcome.mx === "none" && reply) {
+      const b = load();
+      const r = bounced(b.profile ?? blank(), reply);
+      b.profile = r.profile;
+      save(b);
+      if (chat) for (const s of r.say) say(chat, s.text, s.ask);
+    }
+  } else if (!leaving) {
+    // What stopped this request would stop the rest, unless it was this batch's own content.
+    if (outcome.reason !== "invalid" && outcome.reason !== "size") for (const l of queuedOf(load())) ats.add(l.at);
+    setMail(ats, "failed");
+    if (chat) say(chat, FAILED[outcome.reason]);
   }
 }
 
@@ -403,13 +436,23 @@ function retry() {
 }
 
 // A line left queued by a page that closed before it could go out waits for a retry; one left
-// sending most likely arrived (requests are keepalive), and the visit goes on as if it did.
+// sending most likely arrived (requests are keepalive), and the visit goes on as if it did. Only
+// lines too old for any open tab to still hold: a younger one may belong to another tab.
 {
   const a = load();
-  const left = a.log.filter((l) => l.mail === "queued" || l.mail === "sending");
+  const old = Date.now() - MAX_WAIT_MS - 30_000;
+  const left = a.log.filter((l) => (l.mail === "queued" || l.mail === "sending") && l.at < old);
   for (const l of left) l.mail = l.mail === "queued" ? "failed" : "sent";
   if (left.length) save(a);
+  schedule();
 }
+
+// Another tab sent, failed or queued lines: show their marks, and send what waits if it is due.
+addEventListener("storage", (e) => {
+  if (e.key !== KEY) return;
+  remark(load().log.filter((l) => l.mail));
+  schedule();
+});
 
 // Hidden may be the last moment a phone gives the page: whatever waits goes now.
 document.addEventListener("visibilitychange", () => {
@@ -503,6 +546,7 @@ function deleteArchive(chat: HTMLElement) {
   a.log = [];
   // What Amir learnt goes with the log: the next visitor on this device starts over.
   a.profile = undefined;
+  a.thread = newThread();
   save(a);
   showReply(document);
   rounds.set(chat, (rounds.get(chat) ?? 0) + 1);

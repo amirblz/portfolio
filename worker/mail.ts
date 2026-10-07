@@ -1,6 +1,20 @@
 // What a messenger Send becomes: the visitor's lines, checked, as one plain-text e-mail.
 
-import { findContacts, isAddress, isSpam, MAX_LINE, MAX_LINES, MAX_TEXT, OWN_DOMAIN, type Topic } from "../src/lib/ym-parse";
+import {
+  BODY_UNSAFE,
+  findContacts,
+  HEADER_UNSAFE,
+  isAddress,
+  isSpam,
+  MAX_LINE,
+  MAX_LINES,
+  MAX_NAME,
+  MAX_PAGE,
+  MAX_TEXT,
+  OWN_DOMAIN,
+  THREAD,
+  type Topic,
+} from "../src/lib/ym-parse";
 
 export { isAddress, MAX_LINE, MAX_LINES, MAX_TEXT, OWN_DOMAIN, type Topic };
 
@@ -8,6 +22,8 @@ export type Mx = "ok" | "none" | "unknown";
 
 export interface Message {
   visitor: string;
+  /** Tells one visitor's thread from another's when ids collide. */
+  thread?: string;
   lines: string[];
   /** The visit's first e-mail: its subject carries the name and topic. */
   first: boolean;
@@ -24,10 +40,6 @@ export interface Context {
   mx?: Mx;
 }
 
-// Header-bound fields never carry line breaks or other controls; the body allows newlines and tabs.
-const HEADER_UNSAFE = /[\u0000-\u001f\u007f\u0085\u2028\u2029]/;
-const BODY_UNSAFE = /[\u0000-\u0008\u000b-\u001f\u007f]/;
-
 const text = (v: unknown, max: number, min = 1) =>
   typeof v === "string" && v.length >= min && v.length <= max && !HEADER_UNSAFE.test(v);
 
@@ -38,17 +50,19 @@ export function parse(body: unknown): Message | null {
   if (typeof body !== "object" || body === null) return null;
   const b = body as Record<string, unknown>;
   if (!text(b.visitor, 40) || !/^[A-Za-z0-9_]+$/.test(b.visitor as string)) return null;
-  if (!text(b.page, 200) || !(b.page as string).startsWith("/")) return null;
+  if (!text(b.page, MAX_PAGE) || !(b.page as string).startsWith("/")) return null;
+  if (!optional(b.thread, (v) => typeof v === "string" && THREAD.test(v))) return null;
   if (typeof b.first !== "boolean") return null;
   if (!Array.isArray(b.lines) || b.lines.length < 1 || b.lines.length > MAX_LINES) return null;
   const lines = b.lines.map((l) => (typeof l === "string" ? l.trim() : ""));
   if (lines.some((l) => !l || l.length > MAX_LINE || BODY_UNSAFE.test(l))) return null;
-  if (!optional(b.name, (v) => text(v, 80))) return null;
-  if (!optional(b.company, (v) => text(v, 80))) return null;
+  if (!optional(b.name, (v) => text(v, MAX_NAME))) return null;
+  if (!optional(b.company, (v) => text(v, MAX_NAME))) return null;
   if (!optional(b.replyTo, isAddress)) return null;
   if (!optional(b.topic, (v) => v === "job" || v === "project")) return null;
   return {
     visitor: b.visitor as string,
+    thread: b.thread as string | undefined,
     lines,
     first: b.first,
     page: b.page as string,
@@ -66,7 +80,7 @@ const TAGS: Record<Topic, string> = { job: "[Job]", project: "[Project]" };
 export function subject(m: Message) {
   // Tagged, never dropped: a false positive still reaches the inbox.
   const spam = isSpam(m.lines.join("\n")) && "[Possible spam]";
-  const base = `Website message from ${m.visitor}`;
+  const base = `Website message from ${m.visitor}${m.thread ? ` #${m.thread.slice(0, 6)}` : ""}`;
   if (!m.first) return [spam, base].filter(Boolean).join(" ");
   return [spam, m.topic && TAGS[m.topic], base, m.name && `· ${m.name}`].filter(Boolean).join(" ");
 }
@@ -96,4 +110,4 @@ export function body(m: Message, c: Context) {
 }
 
 /** Threads every e-mail from one visitor together. */
-export const threadId = (visitor: string) => `<ym.${visitor}@${OWN_DOMAIN}>`;
+export const threadId = (m: Pick<Message, "visitor" | "thread">) => `<ym.${m.thread ?? m.visitor}@${OWN_DOMAIN}>`;

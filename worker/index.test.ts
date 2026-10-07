@@ -243,6 +243,43 @@ describe("POST /api/send", () => {
     expect(await res.json()).toEqual({ ok: false, reason: "size" });
   });
 
+  it("refuses a chunked body past the cap, with no Content-Length", async () => {
+    const chunk = new TextEncoder().encode("x".repeat(4096));
+    let n = 0;
+    const body = new ReadableStream({
+      pull(c) {
+        if (n++ < 6) c.enqueue(chunk);
+        else c.close();
+      },
+    });
+    const res = await worker.fetch(
+      new Request(`${ORIGIN}/api/send`, {
+        method: "POST",
+        headers: { Origin: ORIGIN, "Content-Type": "application/json", Cookie: await cookie() },
+        body,
+        duplex: "half",
+      } as RequestInit) as never,
+      testEnv,
+    );
+    expect(res.status).toBe(413);
+    expect(sent).toHaveLength(0);
+  });
+
+  it("threads on the visitor's token and adds it to the subject", async () => {
+    const thread = "AbC123xyz_-456789012Q";
+    expect((await sendWithPass({ ...message, thread })).status).toBe(200);
+    expect(sent[0]).toMatchObject({
+      subject: "Website message from lil_pixel_1990 #AbC123",
+      headers: { References: `<ym.${thread}@amirbalazade.com>`, "In-Reply-To": `<ym.${thread}@amirbalazade.com>` },
+    });
+  });
+
+  it("refuses a malformed thread token", async () => {
+    const res = await sendWithPass({ ...message, thread: "short" });
+    expect(res.status).toBe(400);
+    expect(sent).toHaveLength(0);
+  });
+
   it("refuses an oversized request before reading it", async () => {
     const res = await sendWithPass(JSON.stringify({ ...message, pad: "x".repeat(20_000) }));
     expect(res.status).toBe(413);

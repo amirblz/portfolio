@@ -60,6 +60,11 @@ describe("respond", () => {
     expect(visit("hello", "jane@gmial.com", "oops, jane@hotmail.com").profile.reply).toBe("jane@hotmail.com");
   });
 
+  it("keeps no reply address when 'no' keeps a typo the Worker would refuse", () => {
+    const v = visit("reach me at jane@gmail", "no");
+    expect(v.profile.reply).toBeUndefined();
+  });
+
   it("confirms an address found in a message, then the name, one question at a time", () => {
     const v = visit("Hi, I'm Jane from Acme. reach me at jane@acme.com");
     expect(v.said(0)).toEqual(["thanks! that's on its way to my inbox ✉", "should I write back to jane@acme.com?"]);

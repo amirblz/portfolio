@@ -8,6 +8,29 @@ export const OWN_DOMAIN = "amirbalazade.com";
 export const MAX_LINE = 1000;
 export const MAX_LINES = 20;
 export const MAX_TEXT = 8 * 1024;
+export const MAX_NAME = 80;
+export const MAX_PAGE = 200;
+
+// Header-bound fields never carry line breaks or other controls; the body allows newlines and tabs.
+export const HEADER_UNSAFE = /[\u0000-\u001f\u007f\u0085\u2028\u2029]/;
+export const BODY_UNSAFE = /[\u0000-\u0008\u000b-\u001f\u007f]/;
+const HEADER_UNSAFE_ALL = new RegExp(HEADER_UNSAFE.source, "g");
+const BODY_UNSAFE_ALL = new RegExp(BODY_UNSAFE.source, "g");
+
+export const THREAD = /^[A-Za-z0-9_-]{16,32}$/;
+
+/** Random per archive: tells one visitor's mails from another's when two get the same id. */
+export function newThread() {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+/** A name, company or page as the Worker accepts it: one line, no controls, at most `max` characters. */
+export const headerSafe = (v: string, max: number) =>
+  v.replace(/\s+/g, " ").replace(HEADER_UNSAFE_ALL, "").trim().slice(0, max).trim();
+
+/** A line as the Worker accepts it: no controls but newline and tab, at most MAX_LINE characters. */
+export const bodySafe = (v: string) => v.replace(BODY_UNSAFE_ALL, "").trim().slice(0, MAX_LINE).trim();
 
 const ADDRESS = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/;
 

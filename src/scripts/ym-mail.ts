@@ -7,6 +7,8 @@ import { OWN_DOMAIN, type Topic } from "../lib/ym-parse";
 
 export interface Outgoing {
   visitor: string;
+  /** Random per archive: keeps two visitors with the same id apart. */
+  thread?: string;
   lines: string[];
   first: boolean;
   page: string;
@@ -123,9 +125,23 @@ export function pass(): Promise<true | Failure> {
     return res.status === 204 ? true : reasonOf(res);
   })().then((r) => {
     if (r !== true) passing = undefined;
+    else {
+      clearTimeout(renewal);
+      renewal = window.setTimeout(renew, RENEW_MS);
+    }
     return r;
   });
   return passing;
+}
+
+// The pass lasts 30 minutes: an open chat buys the next one before then, so a send as the tab hides
+// never waits on a check that cannot finish.
+const RENEW_MS = 25 * 60_000;
+let renewal = 0;
+
+function renew() {
+  passing = undefined;
+  if (document.querySelector("[data-ym-chat]")) void pass();
 }
 
 async function post(out: Outgoing): Promise<Outcome> {

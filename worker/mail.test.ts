@@ -1,11 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { body, isAddress, parse, subject, tooLong, type Message } from "./mail";
+import { body, isAddress, parse, subject, threadId, tooLong, type Message } from "./mail";
 
 const valid = { visitor: "xX_sk8er_ninja_1985_Xx", lines: ["hi there"], first: true, page: "/contact/chat" };
 
 describe("parse", () => {
   it("accepts a minimal message and trims lines", () => {
     expect(parse({ ...valid, lines: ["  hi  "] })).toEqual({ ...valid, lines: ["hi"] });
+  });
+
+  it("accepts a thread token", () => {
+    expect(parse({ ...valid, thread: "AbC_-123456789012345" })?.thread).toBe("AbC_-123456789012345");
   });
 
   it("accepts every optional field", () => {
@@ -18,6 +22,9 @@ describe("parse", () => {
     ["visitor with a space", { ...valid, visitor: "a b" }],
     ["visitor too long", { ...valid, visitor: "a".repeat(41) }],
     ["page not a path", { ...valid, page: "https://evil.example" }],
+    ["thread too short", { ...valid, thread: "abc" }],
+    ["thread with a bad char", { ...valid, thread: "a".repeat(15) + "!" }],
+    ["thread not a string", { ...valid, thread: 12345678901234567 }],
     ["first missing", { ...valid, first: undefined }],
     ["no lines", { ...valid, lines: [] }],
     ["blank line", { ...valid, lines: ["   "] }],
@@ -75,6 +82,17 @@ describe("subject", () => {
 
   it("keeps later e-mails to the visitor id", () => {
     expect(subject({ ...m, first: false })).toBe("Website message from xX_sk8er_ninja_1985_Xx");
+  });
+
+  it("adds the thread's first six characters", () => {
+    const thread = "AbC123xyz_-456789012Q";
+    expect(subject({ ...m, thread })).toBe("[Project] Website message from xX_sk8er_ninja_1985_Xx #AbC123 · Jane");
+    expect(subject({ ...m, first: false, thread })).toBe("Website message from xX_sk8er_ninja_1985_Xx #AbC123");
+  });
+
+  it("threads on the token, else on the visitor", () => {
+    expect(threadId({ visitor: "a_b" })).toBe("<ym.a_b@amirbalazade.com>");
+    expect(threadId({ visitor: "a_b", thread: "AbC123xyz_-456789012Q" })).toBe("<ym.AbC123xyz_-456789012Q@amirbalazade.com>");
   });
 
   it("leaves out what is unknown", () => {

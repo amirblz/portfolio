@@ -1,5 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { findAddress, findContacts, findTopic, findWho, fixDomain, isAddress, isSpam, sendAt } from "./ym-parse";
+import {
+  bodySafe,
+  findAddress,
+  findContacts,
+  findTopic,
+  findWho,
+  fixDomain,
+  headerSafe,
+  isAddress,
+  isSpam,
+  MAX_LINE,
+  MAX_NAME,
+  newThread,
+  sendAt,
+  THREAD,
+} from "./ym-parse";
 
 describe("isAddress", () => {
   it.each(["a@b.co", "first.last+tag@sub.example.org", "o'neil@example.ie"])("accepts %s", (a) => {
@@ -190,5 +205,25 @@ describe("sendAt", () => {
     expect(sendAt([{ at: 0 }])).toBe(15_000);
     expect(sendAt([{ at: 0 }, { at: 10_000 }])).toBe(25_000);
     expect(sendAt([{ at: 0 }, { at: 50_000 }])).toBe(60_000);
+  });
+});
+
+describe("what the Worker takes", () => {
+  it("makes names one clean line, at most 80 characters", () => {
+    expect(headerSafe("  Acme\tTech \r\n Ltd\u0007 ", MAX_NAME)).toBe("Acme Tech Ltd");
+    expect(headerSafe("x".repeat(90), MAX_NAME)).toHaveLength(80);
+    expect(headerSafe("\u2028", MAX_NAME)).toBe("");
+  });
+
+  it("strips body controls but keeps newline and tab, at most one line's length", () => {
+    expect(bodySafe("a\u000bb\u001bc\nd\te")).toBe("abc\nd\te");
+    expect(bodySafe("x".repeat(1200))).toHaveLength(MAX_LINE);
+  });
+
+  it("makes thread tokens the Worker accepts, each different", () => {
+    const a = newThread();
+    expect(a).toMatch(THREAD);
+    expect(a).toHaveLength(22);
+    expect(newThread()).not.toBe(a);
   });
 });

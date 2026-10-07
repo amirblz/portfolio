@@ -4,7 +4,7 @@
 // and posts the lines.
 
 import ym from "../data/ym.json";
-import { findAddress, findTopic, findWho, type Topic } from "./ym-parse";
+import { findAddress, findTopic, findWho, isAddress, type Topic } from "./ym-parse";
 
 export type Question =
   /** Reply to this address? */
@@ -214,8 +214,11 @@ function answer(t: Turn, q: Question, text: string): { used: (string | undefined
       const found = findAddress(rest);
       if (found && found.address !== q.address && found.address !== q.suggestion) t.address(found);
       else if (found?.address === q.address || yes === false) {
-        p.reply = q.address;
-        t.line(SAVED(q.address));
+        // As typed, if the Worker would take it: otherwise no reply address was given.
+        if (isAddress(q.address)) {
+          p.reply = q.address;
+          t.line(SAVED(q.address));
+        } else t.line(FINE);
       } else if (found?.address === q.suggestion || yes === true) {
         p.reply = q.suggestion;
         t.line(SAVED(q.suggestion));
