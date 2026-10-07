@@ -6,11 +6,19 @@ Personal site. Astro, static output, served from a Cloudflare Worker's asset dir
 npm install
 npm run dev      # local, http://localhost:4321
 npm run build    # static output into dist/
+npm test         # Worker typecheck + tests
 ```
 
 Pushing to `main` builds and deploys through `.github/workflows/deploy.yml`. The workflow needs two
 repository secrets: `CLOUDFLARE_API_TOKEN` (scoped to Workers Scripts Write on this account) and
 `CLOUDFLARE_ACCOUNT_ID`.
+
+## Messenger e-mail
+
+`worker/` is the Worker in front of the assets; it only wakes for `/api/*`. `POST /api/pass` swaps a
+Turnstile token for a 30-minute signed cookie, `POST /api/send` e-mails the visitor's lines through
+the Email Routing `send_email` binding. Secrets: `TURNSTILE_SECRET`, `PASS_SECRET`, `MAIL_TO`. For
+`wrangler dev`, put them in `.dev.vars` with Turnstile's test secret and `SITE_HOST=example.com`.
 
 ## Where the content comes from
 

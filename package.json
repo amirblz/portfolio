@@ -11,7 +11,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "assets": "node make-assets.mjs",
-    "cv:sync": "node scripts/sync-cv.mjs"
+    "cv:sync": "node scripts/sync-cv.mjs",
+    "test": "tsc -p worker && vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
@@ -21,6 +23,10 @@
     "esbuild": true
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20261007.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11",
     "wrangler": "^4.132.0"
   }
 }

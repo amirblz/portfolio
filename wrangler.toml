@@ -1,6 +1,28 @@
 name = "amirbalazade"
+main = "worker/index.ts"
 compatibility_date = "2026-09-16"
 
 [assets]
 directory = "./dist"
+binding = "ASSETS"
 not_found_handling = "404-page"
+# Only the messenger's endpoints wake the Worker; every page stays a plain asset.
+run_worker_first = ["/api/*"]
+
+[vars]
+SITE_HOST = "amirbalazade.com"
+
+# Secrets (wrangler secret put): TURNSTILE_SECRET, PASS_SECRET, MAIL_TO.
+# Unrestricted: Email Routing only delivers to verified destinations, and MAIL_TO names the one.
+[[send_email]]
+name = "MAIL"
+
+[[ratelimits]]
+name = "RL_MIN"
+namespace_id = "1001"
+simple = { limit = 8, period = 60 }
+
+[[ratelimits]]
+name = "RL_BURST"
+namespace_id = "1002"
+simple = { limit = 2, period = 10 }
