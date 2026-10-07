@@ -1,12 +1,8 @@
 // What a messenger Send becomes: the visitor's lines, checked, as one plain-text e-mail.
 
-import { findContacts, isAddress, isSpam, OWN_DOMAIN, type Topic } from "../src/lib/ym-parse";
+import { findContacts, isAddress, isSpam, MAX_LINE, MAX_LINES, MAX_TEXT, OWN_DOMAIN, type Topic } from "../src/lib/ym-parse";
 
-export { isAddress, OWN_DOMAIN, type Topic };
-
-export const MAX_LINE = 1000;
-export const MAX_LINES = 20;
-export const MAX_TEXT = 8 * 1024;
+export { isAddress, MAX_LINE, MAX_LINES, MAX_TEXT, OWN_DOMAIN, type Topic };
 
 export type Mx = "ok" | "none" | "unknown";
 

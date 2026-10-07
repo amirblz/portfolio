@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Writes dist/_headers after the build: security headers, a Content-Security-Policy that allows
- * only the inline scripts the build emitted (by hash) and the sites the IE windows frame, cache
+ * only the inline scripts the build emitted (by hash), Turnstile, and the sites the IE windows frame, cache
  * lifetimes, and a CSS preload hint per page for Cloudflare's Early Hints.
  */
 
@@ -36,9 +36,14 @@ for (const page of pages) {
   routes.push({ route, css });
 }
 
+// The messenger's invisible Turnstile check: its script, and the frame it runs the challenge in.
+const TURNSTILE = 'https://challenges.cloudflare.com';
+frames.add(TURNSTILE);
+
 const csp = [
   "default-src 'self'",
-  `script-src 'self' ${[...scripts].join(' ')}`,
+  `script-src 'self' ${TURNSTILE} ${[...scripts].join(' ')}`,
+  "connect-src 'self'",
   // Windows carry their size in style attributes.
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",

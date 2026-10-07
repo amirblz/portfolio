@@ -1,6 +1,6 @@
 {
   "me": "amir_balazade",
-  "email": "abalazade@gmail.com",
+  "email": "contact@amirbalazade.com",
   "groups": [
     {
       "name": "Friends",
@@ -26,7 +26,7 @@
           "name": "E-mail",
           "status": "online",
           "note": "the slow way",
-          "href": "mailto:abalazade@gmail.com"
+          "href": "mailto:contact@amirbalazade.com"
         }
       ]
     }
@@ -69,5 +69,10 @@
       "joke": "No plug-ins here. This Messenger runs on HTML and CSS."
     }
   ],
-  "audibles": "Audibles are muted. The dancing banana wouldn't stop."
+  "audibles": "Audibles are muted. The dancing banana wouldn't stop.",
+  "turnstile": "0x4AAAAAAFQYJSOi8RoymxV6",
+  "topics": {
+    "job": "a role? 🙂 my CV is on the desktop if you need it. the role, team and location help me reply faster",
+    "project": "a project, nice 🙂 a rough scope, timeline and budget help me reply faster"
+  }
 }

@@ -1,17 +1,30 @@
-// Yahoo! Messenger: the buddy list and the IM window. There is no server: Amir's side is a short
-// script, the visitor's lines leave through their own mail app, and the log stays in this browser.
+// Yahoo! Messenger: the buddy list and the IM window. Amir's side is a script (ym-brain) that asks
+// for a reply address and a name; the visitor's lines reach his inbox by e-mail once they pause
+// typing (ym-mail), and the log stays in this browser.
 
 import { byMouse, play, store } from "./desktop";
+import { deliver, pass, type Failure, type Outcome, type Outgoing } from "./ym-mail";
+import { blank, bounced, respond, type Profile, type Question } from "../lib/ym-brain";
+import { MAX_LINES, MAX_TEXT, MAX_WAIT_MS, sendAt } from "../lib/ym-parse";
 import ym from "../data/ym.json";
 import emoticons from "../data/ym-emoticons.json";
 
 const GREETING = "hey! I'm not at my desk, leave a message and it lands in my inbox ✉";
 const WELCOME = "welcome back 👋";
-const OFFLINE = "I'm offline, hit ✉ Send as e-mail when you're done and it lands in my inbox";
-const GOT_IT = `got it 👍 if your mail app didn't open: ${ym.email}`;
-const PASTE = `too long for a mail link, so I copied it 📋 paste it into the mail. if your mail app didn't open: ${ym.email}`;
-const TOO_LONG = `that's too long for a mail link 😅 copy it from here and write to ${ym.email}`;
-const SUBJECT = "Yahoo! Messenger message from your site";
+const GOT_IT = `your mail app should open with our chat in it 👍 if it didn't: ${ym.email}`;
+const PASTE = `our chat is too long for a mail link, so I copied it 📋 paste it into the mail. if your mail app didn't open: ${ym.email}`;
+const TOO_LONG = `our chat is too long for a mail link 😅 copy it from here and write to ${ym.email}`;
+const SUBJECT = "Yahoo! Messenger chat from your site";
+const RETRY = "click the red ! to try again, or use E-mail Amir up top";
+const FAILED: Record<Failure, string> = {
+  rate: "whoa, that's more than my inbox takes at once 😅 wait a minute, then click the red ! to resend",
+  size: `that's too long for one e-mail 😅 ${RETRY}`,
+  check: `my spam check didn't let that through 😕 ${RETRY}`,
+  pass: `my spam check didn't let that through 😕 ${RETRY}`,
+  invalid: `something went wrong on my side 😕 ${RETRY}`,
+  server: `something went wrong on my side 😕 ${RETRY}`,
+  offline: "looks like you're offline. click the red ! once you're back",
+};
 const BUZZ_BACK = "BUZZ! back 😄";
 const TOO_MANY = "You can only BUZZ once every few seconds.";
 
@@ -27,17 +40,25 @@ export function mailto(to: string, fields: { subject?: string; body?: string }) 
 
 /* ---------- archive ---------- */
 
+type Mail = "queued" | "sending" | "sent" | "failed";
+
 interface Line {
   who: "amir" | "me";
   text: string;
   at: number;
-  mailed?: true;
+  /** A visitor's line on its way to Amir's inbox. Answers, buzzes and pre-e-mail lines have none. */
+  mail?: Mail;
   buzz?: true;
 }
 interface Archive {
   me: string;
   log: Line[];
+  profile?: Profile;
 }
+
+const MAIL = new Set<unknown>(["queued", "sending", "sent", "failed"]);
+const isProfile = (p: unknown): p is Profile =>
+  typeof p === "object" && p !== null && Array.isArray((p as Profile).asked) && Array.isArray((p as Profile).later);
 
 const KEY = "ym-archive";
 const CAP = 200;
@@ -64,9 +85,13 @@ function load(): Archive {
     const a = JSON.parse(store.get(local, KEY) ?? "null");
     if (typeof a?.me === "string" && Array.isArray(a.log)) {
       const log = a.log.filter(
-        (l: Line) => (l?.who === "amir" || l?.who === "me") && typeof l.text === "string" && typeof l.at === "number",
+        (l: Line) =>
+          (l?.who === "amir" || l?.who === "me") &&
+          typeof l.text === "string" &&
+          typeof l.at === "number" &&
+          (l.mail === undefined || MAIL.has(l.mail)),
       );
-      return (memory = { me: a.me, log });
+      return (memory = { me: a.me, log, profile: isProfile(a.profile) ? a.profile : undefined });
     }
   } catch {}
   return (memory ??= { me: visitorId(), log: [] });
@@ -119,6 +144,7 @@ function lineEl(me: string, line: Line, prev?: Line) {
     items.push(date);
   }
   const li = document.createElement("li");
+  li.dataset.at = String(line.at);
   li.classList.toggle("me", line.who === "me");
   li.classList.toggle("ym-buzz", !!line.buzz);
   const who = document.createElement("b");
@@ -126,8 +152,39 @@ function lineEl(me: string, line: Line, prev?: Line) {
   who.textContent = `${line.who === "me" ? me : ym.me}: `;
   li.append(who);
   fill(li, line.text);
+  mark(li, line.mail);
   items.push(li);
   return items;
+}
+
+/** ✓ once in Amir's inbox, a red ! to retry when it didn't get there, greyed out on the way. */
+function mark(li: HTMLElement, mail?: Mail) {
+  li.querySelector(".ym-mark")?.remove();
+  li.classList.toggle("ym-pending", mail === "queued" || mail === "sending");
+  if (mail === "sent") {
+    const ok = document.createElement("span");
+    ok.className = "ym-mark ym-sent";
+    ok.textContent = "✓";
+    ok.title = "In Amir's inbox";
+    ok.setAttribute("role", "img");
+    ok.setAttribute("aria-label", "sent");
+    li.append(ok);
+  } else if (mail === "failed") {
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "ym-mark ym-retry";
+    retry.dataset.ym = "retry";
+    retry.textContent = "!";
+    retry.title = "Not sent. Click to try again";
+    retry.setAttribute("aria-label", "Not sent. Try again");
+    li.append(retry);
+  }
+}
+
+function remark(lines: Line[]) {
+  for (const line of lines) {
+    for (const li of document.querySelectorAll<HTMLElement>(`.ym-log li[data-at="${line.at}"]`)) mark(li, line.mail);
+  }
 }
 
 const logOf = (chat: HTMLElement) => chat.querySelector<HTMLElement>(".ym-log")!;
@@ -147,7 +204,8 @@ const queues = new WeakMap<HTMLElement, Promise<void>>();
 // Bumped by Delete Archive: lines queued before it belong to the deleted conversation.
 const rounds = new WeakMap<HTMLElement, number>();
 
-function say(chat: HTMLElement, text: string) {
+/** A question counts as asked once its line is on screen. */
+function say(chat: HTMLElement, text: string, ask?: Question) {
   const round = rounds.get(chat) ?? 0;
   const next = (queues.get(chat) ?? Promise.resolve()).then(
     () =>
@@ -161,6 +219,7 @@ function say(chat: HTMLElement, text: string) {
           if (chat.isConnected && round === (rounds.get(chat) ?? 0)) {
             post(chat, { who: "amir", text, at: Date.now() });
             play("ym-message");
+            if (ask) shown(ask);
           }
           done();
         }, 700 + Math.min(1800, text.length * 25));
@@ -169,16 +228,36 @@ function say(chat: HTMLElement, text: string) {
   queues.set(chat, next);
 }
 
+function shown(ask: Question) {
+  const a = load();
+  const open = a.profile?.open;
+  if (!open) return;
+  const { shown: _, ...q } = open;
+  if (JSON.stringify(q) !== JSON.stringify(ask)) return;
+  open.shown = true;
+  save(a);
+}
+
 function showMe(root: ParentNode, me: string) {
   for (const el of root.querySelectorAll("[data-ym-me]")) el.textContent = me;
+}
+
+/** Send As names the reply address once the visitor has confirmed one. */
+function showReply(root: ParentNode) {
+  const reply = load().profile?.reply;
+  for (const el of root.querySelectorAll("[data-ym-reply]")) el.textContent = reply ? ` (${reply})` : "";
 }
 
 function start(chat: HTMLElement) {
   if (chat.dataset.ymReady) return;
   chat.dataset.ymReady = "";
   const a = load();
+  // A question still being typed when the last chat closed was never asked.
+  if (a.profile?.open && !a.profile.open.shown) a.profile.open = undefined;
   save(a);
   showMe(document, a.me);
+  showReply(document);
+  void pass();
   // The old log goes in silently; only what arrives from now on is announced.
   const log = logOf(chat);
   log.setAttribute("aria-live", "off");
@@ -190,35 +269,176 @@ function start(chat: HTMLElement) {
   else if (Date.now() - last.at > VISIT) say(chat, WELCOME);
 }
 
-const unmailed = (a: Archive) => a.log.filter((l) => l.who === "me" && !l.mailed && !l.buzz);
+/** This visit's lines: those since the last gap longer than VISIT. */
+function visitOf(log: Line[]) {
+  if (!log.length || Date.now() - log.at(-1)!.at > VISIT) return [];
+  let i = log.length - 1;
+  while (i > 0 && log[i].at - log[i - 1].at <= VISIT) i--;
+  return log.slice(i);
+}
 
-/** The visitor's line goes into the log; nothing is sent until "Send as e-mail". */
-function send(chat: HTMLElement, reply = true) {
+/** The visitor's line goes into the log, Amir answers, and the line waits to go out by e-mail. */
+function send(chat: HTMLElement) {
   const input = chat.querySelector<HTMLTextAreaElement>(".ym-input")!;
   const text = input.value.trim();
   if (!text) return;
   input.value = "";
-  const first = !unmailed(load()).length;
-  post(chat, { who: "me", text, at: Date.now() });
-  if (first && reply) say(chat, OFFLINE);
+  const a = load();
+  const mailed = visitOf(a.log).filter((l) => l.mail);
+  const r = respond(a.profile ?? blank(), text, { first: !mailed.length, earlier: mailed.map((l) => l.text).join("\n") });
+  a.profile = r.profile;
+  save(a);
+  post(chat, { who: "me", text, at: Date.now(), ...(r.mail && { mail: "queued" as const }) });
+  for (const s of r.say) say(chat, s.text, s.ask);
+  showReply(document);
+  schedule();
 }
+
+/* ---------- e-mail ---------- */
+
+let timer = 0;
+// One request at a time: lines typed meanwhile go in the next.
+let flying = false;
+// Set on pagehide: a request then fails in this page though the browser still delivers it.
+let leaving = false;
+const enc = new TextEncoder();
+
+const queuedOf = (a: Archive) => a.log.filter((l) => l.mail === "queued");
+const liveChat = () => [...document.querySelectorAll<HTMLElement>("[data-ym-chat]")].find((c) => "ymReady" in c.dataset);
+
+/** Lines go out once the visitor pauses, or a minute after the first while Amir waits for an answer. */
+function schedule() {
+  clearTimeout(timer);
+  if (flying) return;
+  const a = load();
+  const queued = queuedOf(a);
+  if (!queued.length) return;
+  const last = a.log.filter((l) => l.who === "me").at(-1)!;
+  const due = a.profile?.open ? queued[0].at + MAX_WAIT_MS : sendAt([...queued, last])!;
+  timer = window.setTimeout(flush, Math.max(0, due - Date.now()));
+}
+
+/** As many of the oldest queued lines as one request takes. */
+function batchOf(queued: Line[]) {
+  const out: Line[] = [];
+  let bytes = 0;
+  for (const l of queued) {
+    const n = enc.encode(l.text).length + 1;
+    if (out.length && (out.length >= MAX_LINES || bytes + n > MAX_TEXT)) break;
+    out.push(l);
+    bytes += n;
+  }
+  return out;
+}
+
+function setMail(ats: Set<number>, mail: Mail) {
+  const a = load();
+  const changed = a.log.filter((l) => ats.has(l.at) && l.mail);
+  for (const l of changed) l.mail = mail;
+  save(a);
+  remark(changed);
+}
+
+function outgoing(a: Archive, lines: Line[]): Outgoing {
+  const p = a.profile ?? blank();
+  const website = document.querySelector<HTMLInputElement>(".ym-hp")?.value;
+  return {
+    visitor: a.me,
+    lines: lines.map((l) => l.text),
+    first: !a.log.some((l) => l.mail === "sent"),
+    page: location.pathname,
+    name: p.name,
+    company: p.company,
+    replyTo: p.reply,
+    topic: p.topic,
+    website: website || undefined,
+  };
+}
+
+async function flush() {
+  clearTimeout(timer);
+  if (flying || !queuedOf(load()).length) return;
+  flying = true;
+  try {
+    const passed = await pass();
+    const a = load();
+    const batch = batchOf(queuedOf(a));
+    if (!batch.length) return;
+    const ats = new Set(batch.map((l) => l.at));
+    let outcome: Outcome = { ok: false, reason: passed === true ? "server" : passed };
+    if (passed === true) {
+      setMail(ats, "sending");
+      outcome = await deliver(outgoing(a, batch));
+    }
+    const chat = liveChat();
+    if (outcome.ok) {
+      setMail(ats, "sent");
+      const reply = a.profile?.reply;
+      if (outcome.mx === "none" && reply) {
+        const b = load();
+        const r = bounced(b.profile ?? blank(), reply);
+        b.profile = r.profile;
+        save(b);
+        if (chat) for (const s of r.say) say(chat, s.text, s.ask);
+      }
+    } else if (!leaving) {
+      // What stopped this request would stop the rest: they all wait for a retry.
+      for (const l of queuedOf(load())) ats.add(l.at);
+      setMail(ats, "failed");
+      if (chat) say(chat, FAILED[outcome.reason]);
+    }
+  } finally {
+    flying = false;
+    schedule();
+  }
+}
+
+function retry() {
+  const a = load();
+  const failed = a.log.filter((l) => l.mail === "failed");
+  for (const l of failed) l.mail = "queued";
+  save(a);
+  remark(failed);
+  void flush();
+}
+
+// A line left queued by a page that closed before it could go out waits for a retry; one left
+// sending most likely arrived (requests are keepalive), and the visit goes on as if it did.
+{
+  const a = load();
+  const left = a.log.filter((l) => l.mail === "queued" || l.mail === "sending");
+  for (const l of left) l.mail = l.mail === "queued" ? "failed" : "sent";
+  if (left.length) save(a);
+}
+
+// Hidden may be the last moment a phone gives the page: whatever waits goes now.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") void flush();
+});
+addEventListener("pagehide", () => {
+  leaving = true;
+  void flush();
+});
+addEventListener("pageshow", () => (leaving = false));
 
 // Chrome on Windows drops a mailto URL past 2048 characters without a word.
 const MAX_URL = 1900;
-// Held while the clipboard is busy, so a double-click doesn't mail the same lines twice.
+// Held while the clipboard is busy, so a double-click doesn't open two mails.
 let mailing = false;
 
+/** E-mail Amir: the whole conversation, plus anything still in the box, in the visitor's mail app. */
 async function email(chat: HTMLElement, button: HTMLElement) {
   if (mailing) return;
-  send(chat, false);
   const a = load();
-  const lines = unmailed(a);
-  if (!lines.length) return tip(button, "Type a message first, then send it as e-mail.");
-  const body = `${lines.map((l) => l.text).join("\n\n")}\n\n-- ${a.me}, via Yahoo! Messenger on amirbalazade.com`;
+  const draft = chat.querySelector<HTMLTextAreaElement>(".ym-input")!.value.trim();
+  if (!draft && !a.log.some((l) => l.who === "me" && !l.buzz)) return tip(button, "Type a message first, then e-mail it.");
+  const lines = a.log.filter((l) => !l.buzz).map((l) => `${l.who === "me" ? a.me : ym.me}: ${l.text}`);
+  if (draft) lines.push(`${a.me}: ${draft}`);
+  const body = `${lines.join("\n")}\n\n-- ${a.me}, via Yahoo! Messenger on amirbalazade.com`;
   let url = mailto(ym.email, { subject: SUBJECT, body });
   let reply = GOT_IT;
   if (url.length > MAX_URL) {
-    // Too long for the link: the message rides the clipboard, or stays unsent if that fails too.
+    // Too long for the link: the chat rides the clipboard, or stays here if that fails too.
     mailing = true;
     try {
       await navigator.clipboard.writeText(body);
@@ -227,14 +447,9 @@ async function email(chat: HTMLElement, button: HTMLElement) {
     } finally {
       mailing = false;
     }
-    url = mailto(ym.email, { subject: SUBJECT, body: "(paste your message here)" });
+    url = mailto(ym.email, { subject: SUBJECT, body: "(paste our chat here)" });
     reply = PASTE;
   }
-  // Reloaded: more lines may have been posted while the clipboard was busy.
-  const sent = new Set(lines.map((l) => l.at));
-  const b = load();
-  for (const l of unmailed(b)) if (sent.has(l.at)) l.mailed = true;
-  save(b);
   location.href = url;
   say(chat, reply);
 }
@@ -286,7 +501,10 @@ function buzz(chat: HTMLElement) {
 function deleteArchive(chat: HTMLElement) {
   const a = load();
   a.log = [];
+  // What Amir learnt goes with the log: the next visitor on this device starts over.
+  a.profile = undefined;
   save(a);
+  showReply(document);
   rounds.set(chat, (rounds.get(chat) ?? 0) + 1);
   logOf(chat).replaceChildren();
   say(chat, GREETING);
@@ -397,6 +615,8 @@ document.addEventListener("click", (e) => {
       return;
     case "email":
       return email(chat, action);
+    case "retry":
+      return retry();
     case "buzz":
       return buzz(chat);
     case "smileys": {

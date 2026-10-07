@@ -12,7 +12,7 @@ const ico = (x: number) => `--x: ${x}`;
 
 <Desktop
   title="Chat with Amir | Amir Balazade"
-  description="Leave Amir Balazade a message on Yahoo! Messenger; it goes out by e-mail to abalazade@gmail.com."
+  description="Leave Amir Balazade a message on Yahoo! Messenger. It reaches his inbox as an e-mail."
   path="/contact/chat"
 >
   <Window app="chat" flush>
@@ -27,7 +27,7 @@ const ico = (x: number) => `--x: ${x}`;
         {["Edit", "View", "Actions", "Help"].map((item) => <span aria-hidden="true"><u>{item[0]}</u>{item.slice(1)}</span>)}
       </div>
       <div class="ym-tools" role="toolbar" aria-label="Conversation tools">
-        <button type="button" class="ym-tool" data-ym="email"><i class="ym-ico" style={ico(6)}></i>Send as e-mail</button>
+        <button type="button" class="ym-tool" data-ym="email"><i class="ym-ico" style={ico(6)}></i>E-mail Amir</button>
         <a class="ym-tool" href="/contact" data-open="contact"><img class="ym-ico" src={iconSrc("ym")} alt="" width="26" height="26" />Buddies</a>
         <span class="xp-tool-sep" aria-hidden="true"></span>
         {
@@ -70,9 +70,10 @@ const ico = (x: number) => `--x: ${x}`;
           }
         </div>
       </div>
-      <p class="ym-as">Send As: <span data-ym-me>guest</span></p>
+      <p class="ym-as">Send As: <span data-ym-me>guest</span><span data-ym-reply></span></p>
       <div class="ym-compose">
         <textarea class="ym-input" aria-label="Message" rows="3" maxlength="1000"></textarea>
+        <input class="ym-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button type="button" class="ym-send" data-ym="send">Send</button>
       </div>
       <p class="ym-tip" role="status" hidden></p>
@@ -92,7 +93,7 @@ const ico = (x: number) => `--x: ${x}`;
       </div>
       <div class="status-bar" aria-hidden="true">
         <p class="status-bar-field ym-typing" data-ym-typing></p>
-        <p class="status-bar-field">History is saved on this device only.</p>
+        <p class="status-bar-field">Messages reach Amir by e-mail. History stays on this device.</p>
       </div>
     </div>
   </Window>

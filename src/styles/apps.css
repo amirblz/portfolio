@@ -1278,6 +1278,47 @@ html:not(.js) .ym-compose {
   display: none;
 }
 
+/* A line on its way to Amir's inbox is grey until its ✓; one that didn't make it gets a red ! to retry. */
+.ym-log .ym-pending {
+  color: #999;
+}
+
+.ym-mark {
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+.ym-sent {
+  color: #2a8a2a;
+}
+
+.ym-log .ym-retry {
+  min-width: 0;
+  min-height: 0;
+  padding: 0 5px;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: none;
+  background: #e00;
+  color: #fff;
+  font: bold 11px/15px Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.ym-log .ym-retry:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: 1px;
+}
+
+/* The honeypot: out of sight and out of the tab order, so only a bot fills it. */
+.ym-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
 /* BUZZ!!! in the log is red and bold, like YM's own. */
 .ym-log .ym-buzz {
   color: #e00;

@@ -4,6 +4,11 @@
 
 export const OWN_DOMAIN = "amirbalazade.com";
 
+// One request to /api/send: lines of up to MAX_LINE characters, MAX_LINES of them, MAX_TEXT bytes in all.
+export const MAX_LINE = 1000;
+export const MAX_LINES = 20;
+export const MAX_TEXT = 8 * 1024;
+
 const ADDRESS = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/;
 
 const ownDomain = (domain: string) => {
