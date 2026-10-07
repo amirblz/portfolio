@@ -80,6 +80,12 @@ describe("subject", () => {
   it("leaves out what is unknown", () => {
     expect(subject(valid)).toBe("Website message from xX_sk8er_ninja_1985_Xx");
   });
+
+  it("tags spam on any e-mail, without dropping it", () => {
+    const spam = { ...m, lines: ["cheap backlinks for your site"] };
+    expect(subject(spam)).toBe("[Possible spam] [Project] Website message from xX_sk8er_ninja_1985_Xx · Jane");
+    expect(subject({ ...spam, first: false })).toBe("[Possible spam] Website message from xX_sk8er_ninja_1985_Xx");
+  });
 });
 
 describe("body", () => {
@@ -101,6 +107,13 @@ describe("body", () => {
 
   it("drops footer lines it has nothing for", () => {
     const text = body(valid, { now });
-    expect(text).not.toMatch(/Name:|Reply to:|Country:/);
+    expect(text).not.toMatch(/Name:|Reply to:|Country:|Phone:|LinkedIn:|GitHub:/);
+  });
+
+  it("lists phones and profiles from the lines", () => {
+    const m = { ...valid, lines: ["call +90 532 123 45 67", "linkedin.com/in/jane and github.com/jane"] };
+    expect(body(m, { now })).toContain(
+      "Phone: +90 532 123 45 67\nLinkedIn: https://linkedin.com/in/jane\nGitHub: https://github.com/jane\nVisitor:",
+    );
   });
 });

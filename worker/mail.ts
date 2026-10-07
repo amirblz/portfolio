@@ -1,10 +1,13 @@
 // What a messenger Send becomes: the visitor's lines, checked, as one plain-text e-mail.
 
+import { findContacts, isAddress, isSpam, OWN_DOMAIN, type Topic } from "../src/lib/ym-parse";
+
+export { isAddress, OWN_DOMAIN, type Topic };
+
 export const MAX_LINE = 1000;
 export const MAX_LINES = 20;
 export const MAX_TEXT = 8 * 1024;
 
-export type Topic = "job" | "project";
 export type Mx = "ok" | "none" | "unknown";
 
 export interface Message {
@@ -28,19 +31,11 @@ export interface Context {
 // Header-bound fields never carry line breaks or other controls; the body allows newlines and tabs.
 const HEADER_UNSAFE = /[\u0000-\u001f\u007f\u0085\u2028\u2029]/;
 const BODY_UNSAFE = /[\u0000-\u0008\u000b-\u001f\u007f]/;
-const ADDRESS = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/;
-export const OWN_DOMAIN = "amirbalazade.com";
 
 const text = (v: unknown, max: number, min = 1) =>
   typeof v === "string" && v.length >= min && v.length <= max && !HEADER_UNSAFE.test(v);
 
 const optional = (v: unknown, check: (v: unknown) => boolean) => v === undefined || check(v);
-
-export function isAddress(v: unknown): v is string {
-  if (typeof v !== "string" || v.length > 254 || !ADDRESS.test(v)) return false;
-  const domain = v.slice(v.lastIndexOf("@") + 1).toLowerCase();
-  return domain !== OWN_DOMAIN && !domain.endsWith(`.${OWN_DOMAIN}`);
-}
 
 /** The request body as a Message, or null when anything in it is off. */
 export function parse(body: unknown): Message | null {
@@ -73,9 +68,11 @@ export const tooLong = (m: Message) => new TextEncoder().encode(m.lines.join("\n
 const TAGS: Record<Topic, string> = { job: "[Job]", project: "[Project]" };
 
 export function subject(m: Message) {
+  // Tagged, never dropped: a false positive still reaches the inbox.
+  const spam = isSpam(m.lines.join("\n")) && "[Possible spam]";
   const base = `Website message from ${m.visitor}`;
-  if (!m.first) return base;
-  return [m.topic && TAGS[m.topic], base, m.name && `· ${m.name}`].filter(Boolean).join(" ");
+  if (!m.first) return [spam, base].filter(Boolean).join(" ");
+  return [spam, m.topic && TAGS[m.topic], base, m.name && `· ${m.name}`].filter(Boolean).join(" ");
 }
 
 const MX_NOTE: Record<Mx, string> = {
@@ -87,9 +84,13 @@ const MX_NOTE: Record<Mx, string> = {
 export function body(m: Message, c: Context) {
   const who = [m.name, m.company].filter(Boolean).join(", ");
   const time = c.now.toISOString().slice(0, 16).replace("T", " ");
+  const found = findContacts(m.lines.join("\n"));
   const footer = [
     who && `Name: ${who}`,
     m.replyTo && `Reply to: ${m.replyTo} (${MX_NOTE[c.mx ?? "unknown"]})`,
+    ...found.phones.map((p) => `Phone: ${p}`),
+    ...found.linkedin.map((u) => `LinkedIn: ${u}`),
+    ...found.github.map((u) => `GitHub: ${u}`),
     `Visitor: ${m.visitor}`,
     c.country && `Country: ${c.country}`,
     `Time: ${time} UTC`,

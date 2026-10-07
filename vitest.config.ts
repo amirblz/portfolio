@@ -12,5 +12,5 @@ export default defineConfig({
       },
     }),
   ],
-  test: { include: ["worker/**/*.test.ts"] },
+  test: { include: ["worker/**/*.test.ts", "src/lib/**/*.test.ts"] },
 });
