@@ -396,6 +396,7 @@ async function flush() {
 }
 
 async function deliverQueued() {
+  if (!queuedOf(load()).length) return;
   const passed = await pass();
   // Read inside the lock: another tab may have sent these lines meanwhile.
   const a = load();
@@ -437,13 +438,22 @@ function retry() {
 
 // A line left queued by a page that closed before it could go out waits for a retry; one left
 // sending most likely arrived (requests are keepalive), and the visit goes on as if it did. Only
-// lines too old for any open tab to still hold: a younger one may belong to another tab.
-{
+// lines too old for any open tab to still hold, and none while another tab is sending (a retry
+// re-queues old lines).
+function settle() {
   const a = load();
   const old = Date.now() - MAX_WAIT_MS - 30_000;
   const left = a.log.filter((l) => (l.mail === "queued" || l.mail === "sending") && l.at < old);
   for (const l of left) l.mail = l.mail === "queued" ? "failed" : "sent";
   if (left.length) save(a);
+}
+if (navigator.locks)
+  void navigator.locks.request("ym-send", { ifAvailable: true }, async (lock) => {
+    if (lock) settle();
+    schedule();
+  });
+else {
+  settle();
   schedule();
 }
 
