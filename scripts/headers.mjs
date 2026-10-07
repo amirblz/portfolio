@@ -55,7 +55,7 @@ const rules = [
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
-    'Cross-Origin-Opener-Policy': 'same-origin',
+    // No Cross-Origin-Opener-Policy: its process swap breaks Lighthouse and PageSpeed traces (NO_NAVSTART).
   }],
   // Hashed file names: a new build is a new URL.
   ['/_astro/*', { 'Cache-Control': 'public, max-age=31536000, immutable' }],
