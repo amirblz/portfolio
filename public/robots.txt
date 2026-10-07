@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://amirbalazade.ir/sitemap-index.xml
+Sitemap: https://amirbalazade.com/sitemap-index.xml

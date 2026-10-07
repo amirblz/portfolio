@@ -23,7 +23,7 @@ const card = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" 
   <text x="80" y="374" font-family="${serif}" font-size="62" fill="${text}">in seconds.</text>
   <text x="80" y="530" font-family="${mono}" font-size="24" fill="${dim}">Front-end engineer</text>
   <text x="80" y="566" font-family="${mono}" font-size="24" fill="${dim}">Angular, TypeScript, fintech and web3</text>
-  <text x="1120" y="566" font-family="${mono}" font-size="24" fill="${dim}" text-anchor="end">amirbalazade.ir</text>
+  <text x="1120" y="566" font-family="${mono}" font-size="24" fill="${dim}" text-anchor="end">amirbalazade.com</text>
 </svg>`;
 
 await sharp(Buffer.from(card)).png().toFile("public/og.png");
