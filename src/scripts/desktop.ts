@@ -437,6 +437,12 @@ addEventListener("resize", () => {
 
 /* ---------- opening things ---------- */
 
+// WebKit, so every iPhone browser, reports a tap's click as pointerType "mouse". The pointerdown
+// before it reports "touch", so clicks ask this instead. A keyboard click has detail 0.
+let lastPointer = "";
+addEventListener("pointerdown", (e) => (lastPointer = e.pointerType), { capture: true, passive: true });
+const byMouse = (e: MouseEvent) => e.detail > 0 && lastPointer === "mouse";
+
 // Desktop and folder icons: a mouse selects on click and opens on double-click, like XP.
 // Touch, keyboard and every other [data-open] link open on a single activation.
 document.addEventListener("click", (e) => {
@@ -445,7 +451,7 @@ document.addEventListener("click", (e) => {
   if (!link) return;
   e.preventDefault();
   const isIcon = link.classList.contains("desktop-icon");
-  const mouse = (e as PointerEvent).pointerType === "mouse";
+  const mouse = byMouse(e);
   if (isIcon && mouse && e.detail === 1) {
     selectIcon(link);
     return;
@@ -506,7 +512,7 @@ function setPrograms(show: boolean) {
 startButton.addEventListener("click", () => (startMenu.hidden ? openStart() : closeStart()));
 // A mouse has already opened the list by hovering, so its click keeps it open; touch and keys toggle.
 startAll.addEventListener("click", (e) => {
-  setPrograms((e as PointerEvent).pointerType === "mouse" || Boolean(programs.hidden));
+  setPrograms(byMouse(e) || Boolean(programs.hidden));
   if (!programs.hidden) $<HTMLElement>("[role=menuitem]", programs).focus();
 });
 startAll.addEventListener("pointerenter", (e) => {

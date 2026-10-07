@@ -1,6 +1,11 @@
 name = "amirbalazade"
 compatibility_date = "2026-09-16"
+main = "worker/index.js"
 
 [assets]
 directory = "./dist"
+binding = "ASSETS"
 not_found_handling = "404-page"
+# Pages go through the Worker for the www redirect; images, fonts and bundles skip it, so they
+# stay free static requests.
+run_worker_first = ["/*", "!/_astro/*", "!/xp/*"]
