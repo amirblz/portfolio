@@ -30,7 +30,8 @@ export const headerSafe = (v: string, max: number) =>
   v.replace(/\s+/g, " ").replace(HEADER_UNSAFE_ALL, "").trim().slice(0, max).trim();
 
 /** A line as the Worker accepts it: no controls but newline and tab, at most MAX_LINE characters. */
-export const bodySafe = (v: string) => v.replace(BODY_UNSAFE_ALL, "").trim().slice(0, MAX_LINE).trim();
+export const bodySafe = (v: string) =>
+  v.replace(BODY_UNSAFE_ALL, "").trim().slice(0, MAX_LINE).replace(/[\uD800-\uDBFF]$/, "").trim();
 
 const ADDRESS = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/;
 

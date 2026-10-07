@@ -438,22 +438,24 @@ function retry() {
 
 // A line left queued by a page that closed before it could go out waits for a retry; one left
 // sending most likely arrived (requests are keepalive), and the visit goes on as if it did. Only
-// lines too old for any open tab to still hold, and none while another tab is sending (a retry
-// re-queues old lines).
-function settle() {
+// queued lines too old for any open tab to still hold, and nothing while another tab is sending (a
+// retry re-queues old lines). With the lock free, no tab is sending whatever is left sending.
+function settle(free: boolean) {
   const a = load();
   const old = Date.now() - MAX_WAIT_MS - 30_000;
-  const left = a.log.filter((l) => (l.mail === "queued" || l.mail === "sending") && l.at < old);
+  const left = a.log.filter(
+    (l) => (l.mail === "queued" || l.mail === "sending") && (l.at < old || (free && l.mail === "sending")),
+  );
   for (const l of left) l.mail = l.mail === "queued" ? "failed" : "sent";
   if (left.length) save(a);
 }
 if (navigator.locks)
   void navigator.locks.request("ym-send", { ifAvailable: true }, async (lock) => {
-    if (lock) settle();
+    if (lock) settle(true);
     schedule();
   });
 else {
-  settle();
+  settle(false);
   schedule();
 }
 
@@ -461,7 +463,8 @@ else {
 addEventListener("storage", (e) => {
   if (e.key !== KEY) return;
   remark(load().log.filter((l) => l.mail));
-  schedule();
+  // Only a tab with the chat sends: one without it would buy a pass of its own.
+  if (liveChat()) schedule();
 });
 
 // Hidden may be the last moment a phone gives the page: whatever waits goes now.

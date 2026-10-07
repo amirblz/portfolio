@@ -112,10 +112,12 @@ async function reasonOf(res: Response): Promise<Failure> {
 }
 
 let passing: Promise<true | Failure> | undefined;
+let buying = false;
 
 /** Buys the pass, once per page unless it lapses or fails. The chat calls this when it opens. */
 export function pass(): Promise<true | Failure> {
   passing ??= (async () => {
+    buying = true;
     // No network: say so now, not after the check's 15-second wait.
     if (offline()) return "offline";
     const t = await token();
@@ -124,6 +126,7 @@ export function pass(): Promise<true | Failure> {
     if (typeof res === "string") return res;
     return res.status === 204 ? true : reasonOf(res);
   })().then((r) => {
+    buying = false;
     if (r !== true) passing = undefined;
     else {
       clearTimeout(renewal);
@@ -140,6 +143,8 @@ const RENEW_MS = 25 * 60_000;
 let renewal = 0;
 
 function renew() {
+  // A pass being bought right now (after a 401) renews it already.
+  if (buying) return;
   passing = undefined;
   if (document.querySelector("[data-ym-chat]")) void pass();
 }

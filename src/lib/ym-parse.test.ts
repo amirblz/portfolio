@@ -218,6 +218,7 @@ describe("what the Worker takes", () => {
   it("strips body controls but keeps newline and tab, at most one line's length", () => {
     expect(bodySafe("a\u000bb\u001bc\nd\te")).toBe("abc\nd\te");
     expect(bodySafe("x".repeat(1200))).toHaveLength(MAX_LINE);
+    expect(bodySafe("x".repeat(999) + "😀")).toBe("x".repeat(999));
   });
 
   it("makes thread tokens the Worker accepts, each different", () => {
