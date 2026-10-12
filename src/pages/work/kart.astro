@@ -1,0 +1,17 @@
+---
+import Desktop from "../../layouts/Desktop.astro";
+import Window from "../../components/Window.astro";
+import Browser from "../../components/Browser.astro";
+---
+
+<Desktop
+  title="APEX: a karting venue concept demo"
+  description="A concept site for a karting venue: packages, an interactive circuit and a preview of the booking journey."
+  path="/work/kart"
+>
+  <Window app="kart" flush>
+    <Browser url="https://kart-demo.amirbalazade.com" label="APEX karting demo, live">
+      APEX: a karting venue concept with packages, an interactive circuit and a booking journey preview.
+    </Browser>
+  </Window>
+</Desktop>

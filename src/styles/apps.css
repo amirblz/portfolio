@@ -10,8 +10,8 @@
   padding: 16px;
   min-height: 100%;
   box-sizing: border-box;
-  color: #fff;
-  background: linear-gradient(160deg, #5a8be6, #2c5ccf 55%, #1d46b0);
+  color: #1b2a4a;
+  background: linear-gradient(160deg, #fff, #eef3fc 55%, #d9e5f8);
 }
 
 .welcome-head {
@@ -23,13 +23,13 @@
 .welcome-head img {
   border: 2px solid #fff;
   border-radius: 4px;
-  box-shadow: 1px 1px 4px rgb(0 0 0 / 0.4);
+  box-shadow: 0 1px 4px rgb(12 46 116 / 0.3);
 }
 
 .welcome h1 {
   margin: 0;
+  color: #0c3fa5;
   font: 700 22px "Trebuchet MS", Tahoma, sans-serif;
-  text-shadow: 1px 1px 2px #0c2e74;
 }
 
 .welcome-head p {
@@ -52,18 +52,19 @@
   align-items: center;
   gap: 8px;
   padding: 8px;
-  border: 1px solid rgb(255 255 255 / 0.35);
+  border: 1px solid #b9cbeb;
   border-radius: 6px;
-  color: #fff;
+  color: #1b2a4a;
   font: 700 12px Tahoma, sans-serif;
   text-decoration: none;
-  background: rgb(255 255 255 / 0.12);
+  background: #fff;
 }
 
 .welcome-app:hover,
 .welcome-app:focus-visible {
-  background: rgb(255 255 255 / 0.28);
-  outline: 1px dotted #fff;
+  border-color: #7da2e2;
+  background: #e3ecfb;
+  outline: 1px dotted #0c3fa5;
 }
 
 .welcome-foot {
@@ -74,7 +75,7 @@
 }
 
 .welcome-foot a {
-  color: #fff;
+  color: #0c3fa5;
 }
 
 /* ---------- shared app chrome ---------- */

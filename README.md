@@ -35,10 +35,11 @@ behaviour in the delegated handlers of `src/scripts/apps.ts`.
 
 ## Demos
 
-The two demos are separate repositories and separate Workers, linked from here:
+The demos are separate repositories and separate Workers, linked from here:
 
 - OSSA — <https://ossa.abalazade.workers.dev>
 - CAIRN — <https://cairn.abalazade.workers.dev>
+- APEX — <https://kart-demo.amirbalazade.com>
 
 ## XP assets
 
